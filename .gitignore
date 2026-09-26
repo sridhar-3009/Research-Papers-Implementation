@@ -1,0 +1,6 @@
+__pycache__/
+.pytest_cache/
+.DS_Store
+
+# Paper PDFs are copyrighted; link to them from each README instead
+*.pdf
