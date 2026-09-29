@@ -24,7 +24,7 @@ circuits.py  tpe.py
  demo.py, test_mp.py
 ```
 
-**Run it** (from the `01-McCulloch-Pitts-1943` folder):
+**Run it** (from the `01-Foundations/001-McCulloch-Pitts-1943` folder):
 ```
 python3 demo.py           # see the networks run
 python3 -m pytest -q      # run all tests

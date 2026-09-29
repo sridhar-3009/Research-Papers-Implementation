@@ -4,3 +4,6 @@ __pycache__/
 
 # Paper PDFs are copyrighted; link to them from each README instead
 *.pdf
+
+# Shared datasets, downloaded on demand
+data/
