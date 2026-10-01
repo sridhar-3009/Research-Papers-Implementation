@@ -45,9 +45,9 @@ Each stage is a folder in this repository, and each paper has its own folder ins
 
 | # | Paper | You'll learn | Level | Status |
 |---|---|---|---|---|
-| 013 | LeCun et al. (1998), *Gradient-Based Learning Applied to Document Recognition* (LeNet-5) | **Convolutions**, pooling, weight sharing | ★★★ (read Sections I–III) | |
-| 014 | Krizhevsky, Sutskever & Hinton (2012), *ImageNet Classification with Deep CNNs* (AlexNet) | ReLU + dropout + GPUs = the deep learning revolution | ★ | |
-| 015 | Simonyan & Zisserman (2015), *Very Deep Convolutional Networks* (VGG) | Deeper is better: stacks of small 3×3 filters | ★ | |
+| 013 | LeCun et al. (1998), *Gradient-Based Learning Applied to Document Recognition* (LeNet-5) | **Convolutions**, pooling, weight sharing | ★★★ (read Sections I–III) | ✅ |
+| 014 | Krizhevsky, Sutskever & Hinton (2012), *ImageNet Classification with Deep CNNs* (AlexNet) | ReLU + dropout + GPUs = the deep learning revolution | ★ | ✅ |
+| 015 | Simonyan & Zisserman (2015), *Very Deep Convolutional Networks* (VGG) | Deeper is better: stacks of small 3×3 filters | ★ | ✅ |
 | 016 | He et al. (2016), *Deep Residual Learning* (ResNet) | **Skip connections**: how to train 100+ layers | ★★ | |
 
 ## Stage 04: What networks really learn. Robustness and generalization
