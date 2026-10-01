@@ -86,7 +86,7 @@ Each stage is a folder in this repository, and each paper has its own folder ins
 |---|---|---|---|---|
 | 034 | Vaswani et al. (2017), *Attention Is All You Need* | **The Transformer**: self-attention, multi-head, positional encoding | ★★ | ✅ |
 | 035 | Shazeer (2019), *Fast Transformer Decoding: One Write-Head is All You Need* | **Multi-Query Attention**: faster inference | ★★ | ✅ |
-| 036 | Child et al. (2019), *Generating Long Sequences with Sparse Transformers* | Sparse attention for long inputs | ★★ | |
+| 036 | Child et al. (2019), *Generating Long Sequences with Sparse Transformers* | Sparse attention for long inputs | ★★ | ✅ |
 | 037 | Devlin et al. (2019), *BERT* | **Bidirectional** pretraining with masked words | ★★ | |
 | 038 | Dosovitskiy et al. (2021), *An Image is Worth 16x16 Words* (ViT) | Transformers for **images** | ★★ | |
 
