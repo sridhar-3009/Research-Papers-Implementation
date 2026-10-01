@@ -48,44 +48,44 @@ Each stage is a folder in this repository, and each paper has its own folder ins
 | 013 | LeCun et al. (1998), *Gradient-Based Learning Applied to Document Recognition* (LeNet-5) | **Convolutions**, pooling, weight sharing | ★★★ (read Sections I–III) | ✅ |
 | 014 | Krizhevsky, Sutskever & Hinton (2012), *ImageNet Classification with Deep CNNs* (AlexNet) | ReLU + dropout + GPUs = the deep learning revolution | ★ | ✅ |
 | 015 | Simonyan & Zisserman (2015), *Very Deep Convolutional Networks* (VGG) | Deeper is better: stacks of small 3×3 filters | ★ | ✅ |
-| 016 | He et al. (2016), *Deep Residual Learning* (ResNet) | **Skip connections**: how to train 100+ layers | ★★ | |
+| 016 | He et al. (2016), *Deep Residual Learning* (ResNet) | **Skip connections**: how to train 100+ layers | ★★ | ✅ |
 
 ## Stage 04: What networks really learn. Robustness and generalization
 **Why here:** now that you've seen big networks work, two surprising papers show their strange side.
 
 | # | Paper | You'll learn | Level | Status |
 |---|---|---|---|---|
-| 017 | Szegedy et al. (2013), *Intriguing Properties of Neural Networks* | **Adversarial examples**: invisible changes fool the network | ★★ | |
-| 018 | Zhang et al. (2017), *Understanding Deep Learning Requires Rethinking Generalization* | Networks can memorize **random labels** | ★ | |
+| 017 | Szegedy et al. (2013), *Intriguing Properties of Neural Networks* | **Adversarial examples**: invisible changes fool the network | ★★ | ✅ |
+| 018 | Zhang et al. (2017), *Understanding Deep Learning Requires Rethinking Generalization* | Networks can memorize **random labels** | ★ | ✅ |
 
 ## Stage 05: Words and sequences. RNNs, LSTMs, Seq2Seq, attention
 **Why here:** text and speech come in sequences. This stage builds up, step by step, to **attention**, the key idea behind transformers.
 
 | # | Paper | You'll learn | Level | Status |
 |---|---|---|---|---|
-| 019 | Mikolov et al. (2013), *Distributed Representations of Words and Phrases* (Word2Vec) | Words as vectors; **embeddings** | ★ | |
-| 020 | Mikolov, Le & Sutskever (2013), *Exploiting Similarities among Languages for MT* | Word vectors line up across languages *(optional)* | ★ | |
-| 021 | Hochreiter & Schmidhuber (1997), *Long Short-Term Memory* | The **LSTM**: memory that doesn't fade | ★★★ (read Sections 1–4) | |
-| 022 | Sutskever, Martens & Hinton (2011), *Generating Text with Recurrent Neural Networks* | Character-level text generation | ★★ | |
-| 023 | Sutskever (2013), *Training Recurrent Neural Networks* (PhD thesis) | Deep dive into RNN training *(optional, 101 pages)* | ★★★ | |
-| 024 | Zaremba, Sutskever & Vinyals (2014), *Recurrent Neural Network Regularization* | Dropout for LSTMs, done right | ★ | |
-| 025 | Jozefowicz, Zaremba & Sutskever (2015), *An Empirical Exploration of Recurrent Network Architectures* | Which LSTM parts matter (the forget gate) | ★★ | |
-| 026 | Cho et al. (2014), *Learning Phrase Representations using RNN Encoder–Decoder* | The **GRU** and encoder–decoder | ★★ | |
-| 027 | Sutskever, Vinyals & Le (2014), *Sequence to Sequence Learning* | **Seq2Seq**: translate a whole sentence | ★ | |
-| 028 | Bahdanau, Cho & Bengio (2015), *Neural Machine Translation by Jointly Learning to Align and Translate* | **Attention**: look back at the right words | ★★ | |
-| 029 | Vinyals et al. (2015), *Show and Tell* | Image → sentence (CNN + LSTM) | ★ | |
-| 030 | Vinyals et al. (2015), *Grammar as a Foreign Language* | Seq2Seq for parsing *(optional)* | ★ | |
-| 031 | Vinyals, Fortunato & Jaitly (2015), *Pointer Networks* | Attention that **points** at the input | ★★ | |
-| 032 | Vinyals, Bengio & Kudlur (2015), *Order Matters* | Input order changes Seq2Seq results *(optional)* | ★★ | |
-| 033 | Kalchbrenner et al. (2016), *Neural Machine Translation in Linear Time* (ByteNet) | Convolutions instead of RNNs for sequences *(optional)* | ★★ | |
+| 019 | Mikolov et al. (2013), *Distributed Representations of Words and Phrases* (Word2Vec) | Words as vectors; **embeddings** | ★ | ✅ |
+| 020 | Mikolov, Le & Sutskever (2013), *Exploiting Similarities among Languages for MT* | Word vectors line up across languages *(optional)* | ★ | ✅ |
+| 021 | Hochreiter & Schmidhuber (1997), *Long Short-Term Memory* | The **LSTM**: memory that doesn't fade | ★★★ (read Sections 1–4) | ✅ |
+| 022 | Sutskever, Martens & Hinton (2011), *Generating Text with Recurrent Neural Networks* | Character-level text generation | ★★ | ✅ |
+| 023 | Sutskever (2013), *Training Recurrent Neural Networks* (PhD thesis) | Deep dive into RNN training *(optional, 101 pages)* | ★★★ | ✅ |
+| 024 | Zaremba, Sutskever & Vinyals (2014), *Recurrent Neural Network Regularization* | Dropout for LSTMs, done right | ★ | ✅ |
+| 025 | Jozefowicz, Zaremba & Sutskever (2015), *An Empirical Exploration of Recurrent Network Architectures* | Which LSTM parts matter (the forget gate) | ★★ | ✅ |
+| 026 | Cho et al. (2014), *Learning Phrase Representations using RNN Encoder–Decoder* | The **GRU** and encoder–decoder | ★★ | ✅ |
+| 027 | Sutskever, Vinyals & Le (2014), *Sequence to Sequence Learning* | **Seq2Seq**: translate a whole sentence | ★ | ✅ |
+| 028 | Bahdanau, Cho & Bengio (2015), *Neural Machine Translation by Jointly Learning to Align and Translate* | **Attention**: look back at the right words | ★★ | ✅ |
+| 029 | Vinyals et al. (2015), *Show and Tell* | Image → sentence (CNN + LSTM) | ★ | ✅ |
+| 030 | Vinyals et al. (2015), *Grammar as a Foreign Language* | Seq2Seq for parsing *(optional)* | ★ | ✅ |
+| 031 | Vinyals, Fortunato & Jaitly (2015), *Pointer Networks* | Attention that **points** at the input | ★★ | ✅ |
+| 032 | Vinyals, Bengio & Kudlur (2015), *Order Matters* | Input order changes Seq2Seq results *(optional)* | ★★ | ✅ |
+| 033 | Kalchbrenner et al. (2016), *Neural Machine Translation in Linear Time* (ByteNet) | Convolutions instead of RNNs for sequences *(optional)* | ★★ | ✅ |
 
 ## Stage 06: Transformers. Attention is all you need
 **Why here:** you now know embeddings, Seq2Seq and attention, which are exactly the pieces the transformer is made of.
 
 | # | Paper | You'll learn | Level | Status |
 |---|---|---|---|---|
-| 034 | Vaswani et al. (2017), *Attention Is All You Need* | **The Transformer**: self-attention, multi-head, positional encoding | ★★ | |
-| 035 | Shazeer (2019), *Fast Transformer Decoding: One Write-Head is All You Need* | **Multi-Query Attention**: faster inference | ★★ | |
+| 034 | Vaswani et al. (2017), *Attention Is All You Need* | **The Transformer**: self-attention, multi-head, positional encoding | ★★ | ✅ |
+| 035 | Shazeer (2019), *Fast Transformer Decoding: One Write-Head is All You Need* | **Multi-Query Attention**: faster inference | ★★ | ✅ |
 | 036 | Child et al. (2019), *Generating Long Sequences with Sparse Transformers* | Sparse attention for long inputs | ★★ | |
 | 037 | Devlin et al. (2019), *BERT* | **Bidirectional** pretraining with masked words | ★★ | |
 | 038 | Dosovitskiy et al. (2021), *An Image is Worth 16x16 Words* (ViT) | Transformers for **images** | ★★ | |

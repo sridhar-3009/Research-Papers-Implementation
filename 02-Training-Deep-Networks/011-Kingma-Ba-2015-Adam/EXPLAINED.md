@@ -1,159 +1,242 @@
-# Kingma & Ba (2015), explained simply
+# Kingma & Ba (2015), explained from scratch
 
 **Paper:** *Adam: A Method for Stochastic Optimization*
 **Authors:** Diederik P. Kingma, Jimmy Lei Ba
 **Published at:** ICLR 2015 (arXiv:1412.6980)
 
-Read Paper 008 (momentum) first. Adam is momentum plus a per-weight learning rate.
+Read Paper 008 (momentum) first: Adam is momentum plus a per-weight learning rate. This guide builds Adam piece by piece from one simple tool, the **exponential moving average**, and works through every formula with numbers.
 
 ---
 
-## The big idea in one line
+## 0. The whole idea in one line
 
-> **Keep a running average of the gradient (m, "which way") and of the squared gradient (v, "how big"). Step by m / √v. Every weight then moves by about α per step, whatever its gradient's scale, and the zero-start bias of the averages is divided out.**
+> **Keep a running average of the gradient (m: "which way") and of the squared gradient (v: "how big"). Step by m/√v. Every weight then moves by about α per step whatever its gradient's scale, and the zero-start bias of the averages is divided out.**
+
+Adam is the default optimizer of modern deep learning: most Transformers and LLMs are trained with it (or its variant AdamW).
 
 ---
 
 ## 1. The problem (Section 1)
 
-Plain SGD uses **one learning rate for every weight**. That's bad when:
-- different weights have gradients of very different sizes (sparse features, different layers);
-- the gradients are **noisy** (minibatches, dropout);
-- the objective **changes over time**, as in RNNs and online learning.
+**Plain SGD uses one learning rate for every weight.** That is bad when:
+- **gradient sizes differ wildly between weights:** rare (sparse) features, different layers (Paper 006 showed lower layers have smaller curvature);
+- **the gradients are noisy** (minibatches, dropout);
+- **the objective changes over time** (RNNs, online learning).
 
-Two earlier fixes each solve half of this:
+**Two earlier methods each fix half of this:**
 
-| Method | Good at | Weakness |
-|---|---|---|
-| **AdaGrad** (Duchi 2011): divide by √(sum of all past g²) | sparse gradients | the sum only grows, so learning slowly stops |
-| **RMSProp** (Hinton 2012): divide by √(running average of g²) | non-stationary problems | no bias correction, which is unstable early on (Section 6.4) |
+| Method | Rule | Good at | Weakness |
+|---|---|---|---|
+| **AdaGrad** (Duchi 2011) | divide by √(Σ all past g²) | sparse gradients | the sum only grows, so steps shrink toward 0 and learning stops |
+| **RMSProp** (Hinton 2012) | divide by √(running average of g²) | changing problems | no bias correction, unstable early (Section 6.4) |
 
-Adam = RMSProp's running average + momentum + **bias correction**.
+**Adam = RMSProp's running average + momentum + bias correction.**
 
 ---
 
-## 2. The algorithm (Algorithm 1, page 2)
-
-For each step t = 1, 2, … with gradient g_t:
+## 2. The tool: the exponential moving average (EMA)
 
 ```
-m_t = β1·m_{t-1} + (1 − β1)·g_t          running mean of g         ("1st moment")
-v_t = β2·v_{t-1} + (1 − β2)·g_t²         running mean of g²        ("2nd raw moment")
-m̂_t = m_t / (1 − β1^t)                   bias correction
-v̂_t = v_t / (1 − β2^t)
-θ_t = θ_{t-1} − α · m̂_t / (√v̂_t + ε)
+a_t = β · a_{t−1} + (1 − β) · x_t          (a_0 = 0)
 ```
-Everything is **element-wise**: each weight has its own m and v.
-
-**Default settings:** α = 0.001, β1 = 0.9, β2 = 0.999, ε = 10⁻⁸. These defaults work surprisingly often.
-
-- β1 = 0.9 means m averages roughly the last 10 gradients.
-- β2 = 0.999 means v averages roughly the last 1000.
-
----
-
-## 3. Why the step is "about α" (Section 2.1)
-
-The effective step is **Δ = α · m̂/√v̂**.
-
-- **The ratio m̂/√v̂ is like a signal-to-noise ratio.**
-  - If the gradient keeps pointing the same way, m̂ ≈ √v̂, so |Δ| ≈ α.
-  - If it flips sign randomly, m̂ ≈ 0 while √v̂ stays large, so the steps become tiny. Near a minimum the SNR drops, and Adam automatically **anneals**.
-- **Bounded:** |Δ| ≤ α·(1 − β1)/√(1 − β2) in the worst case (a sudden huge gradient after many zeros), and |Δ| ≤ α in common cases.
-  - So **α sets a trust region**. You can choose α from how far the weights should ever move (e.g. "weights are ~0.1 in size, so α = 0.001 is safe").
-- **Scale-invariant:** multiply every gradient by c, and m̂ and √v̂ both scale by c, so the step is unchanged.
-- **The first step** is exactly α·sign(g).
-
----
-
-## 4. Bias correction (Section 3)
-
-m_0 = v_0 = 0, so the early averages are **pulled toward 0**.
-
-With a constant gradient g:
+**Unrolled:**
 ```
-v_t = (1 − β2)(g² + β2 g² + … + β2^{t−1} g²) = g²·(1 − β2^t)
+a_t = (1 − β) [ x_t + β x_{t−1} + β² x_{t−2} + … + β^{t−1} x_1 ]
 ```
-So E[v_t] = E[g²]·(1 − β2^t), plus a small term if g drifts. Dividing by (1 − β2^t) removes the bias exactly.
+- **What it is:** an average in which old values fade geometrically.
+- **How far back it remembers:** the weights (1 − β)βᵏ sum to about 1 when t is large, and the "effective window" is about **1/(1 − β)** steps:
+  - β = 0.9 averages roughly the last **10** values;
+  - β = 0.999 averages roughly the last **1,000**.
 
-**Why it matters:** with β2 = 0.999, v_1 = 0.001·g², so √v_1 is ~0.03|g|. Without correction, the first steps would be **~30× too big** (and ~100× for β2 = 0.9999). β2 near 1 is exactly what you want for sparse gradients, so the correction is needed right where Adam should shine. That is what Figure 4 shows.
+### 2.1 Bias from starting at zero
+- **The problem:** early on, the weights don't yet sum to 1. They sum to:
+  ```
+  (1 − β)(1 + β + … + β^{t−1}) = (1 − β) · (1 − βᵗ)/(1 − β) = 1 − βᵗ           (geometric series)
+  ```
+- **So if the inputs are all the same value x,** then a_t = (1 − βᵗ)·x: **too small by the factor (1 − βᵗ)**.
+- **The fix:** divide by it:
+  ```
+  â_t = a_t / (1 − βᵗ)
+  ```
+  This gives exactly x from step 1.
+- **The size of the bias** depends on β: with β = 0.999, a_1 = 0.001x. That is a 1000× underestimate at the first step, and still 37% too small after 1,000 steps (0.999¹⁰⁰⁰ ≈ 0.37).
 
 ---
 
-## 5. Convergence (Section 4)
+## 3. The algorithm (Algorithm 1, page 2)
 
-- Framework: **online convex optimization**. At each step a new convex loss f_t arrives. **Regret** = Σ_t [f_t(θ_t) − f_t(θ*)], the total extra loss compared with the best fixed θ.
-- **Theorem 4.1:** with α_t = α/√t and β1 decaying (β1,t = β1·λ^{t−1}), Adam's regret is **O(√T)**, so the average regret R(T)/T → 0. That's the best known bound for this setting, and like AdaGrad it is much better when gradients are sparse.
-- **Caveat (not in the paper):** Reddi et al. (2018, "On the Convergence of Adam and Beyond", AMSGrad) found an error in this proof and built convex problems where Adam fails to converge. In practice Adam still works very well, but the theorem as stated is not correct.
+For t = 1, 2, … with gradient g_t (everything is **per weight**):
+```
+m_t = β₁ m_{t−1} + (1 − β₁) g_t          EMA of g    ("first moment":  which way, on average)
+v_t = β₂ v_{t−1} + (1 − β₂) g_t²         EMA of g²   ("second raw moment": how big, typically)
+m̂_t = m_t / (1 − β₁ᵗ)                    bias corrections (section 2.1)
+v̂_t = v_t / (1 − β₂ᵗ)
+θ_t = θ_{t−1} − α · m̂_t / (√v̂_t + ε)
+```
+**The defaults** (α = 0.001, β₁ = 0.9, β₂ = 0.999, ε = 10⁻⁸) work surprisingly often:
+- m remembers about 10 gradients;
+- v remembers about 1,000.
+
+### 3.1 Worked example: a constant gradient g = 2, with β₁ = 0.9 and β₂ = 0.999 (our demo)
+| t | m_t | m̂_t | v_t | v̂_t | step α·m̂/√v̂ |
+|---|---|---|---|---|---|
+| 1 | 0.2000 | 2.0000 | 0.004000 | 4.0000 | α·2/2 = **α** |
+| 2 | 0.3800 | 2.0000 | 0.007996 | 4.0000 | **α** |
+| 3 | 0.5420 | 2.0000 | 0.011988 | 4.0000 | **α** |
+
+- **Without correction,** the step at t = 1 would be α·0.2/√0.004 = α·0.2/0.0632 = **3.2α**.
+- **With β₂ = 0.9999 and β₁ = 0,** it's α·2/√(0.0004) = α·2/0.02 = **100α**. The demo shows exactly this: 1.0 instead of 0.01.
 
 ---
 
-## 6. Related methods (Section 5)
+## 4. Why the step is "about α" (Section 2.1)
+
+The step is Δ = α · m̂/√v̂.
+
+### 4.1 The ratio is like a signal-to-noise ratio
+- **If the gradient keeps the same sign and size,** m̂ ≈ g and √v̂ ≈ |g|, so |Δ| ≈ **α**.
+- **If it flips randomly (pure noise),** m̂ ≈ 0 while √v̂ ≈ the noise level, so the step is tiny.
+- **This gives automatic annealing:** near a minimum the gradient is mostly noise, so the SNR falls and Adam takes small steps even with a constant α.
+
+### 4.2 A bound on every step
+- **The worst case:** a huge gradient g arrives after a long run of zeros. Then m ≈ (1 − β₁)g and v ≈ (1 − β₂)g², so:
+  ```
+  |Δ| ≈ α (1 − β₁) |g| / (√(1 − β₂) |g|) = α (1 − β₁)/√(1 − β₂)
+  ```
+- **With the defaults** that's α·0.1/0.0316 ≈ **3.16α**, and in common cases |Δ| ≤ α.
+- **So α acts as a trust region:** you choose it from how far the weights should ever move in one step.
+
+### 4.3 Scale invariance
+- **The setup:** multiply every gradient by c > 0. Then m̂ scales by c, and √v̂ by c.
+- **The step is unchanged** (ignoring ε).
+- **The consequences:**
+  - the first step is exactly **α·sign(g)**;
+  - in the demo it is −0.1000 for gradients of 0.001, 1 and 1000 alike.
+
+### 4.4 The geometry: a diagonal preconditioner
+- **The rescaling:** dividing by √v̂ gives each coordinate its own learning rate α/√v̂_i.
+- **The effect:** coordinates with consistently big gradients (steep directions) get smaller rates, and flat ones get bigger rates. That roughly evens out Paper 006's eigenvalue spread, though only along the coordinate axes.
+- **The demo:** f = ½(x² + 100y²):
+  - SGD+Nesterov needs a hand-picked rate (0.005 works, 0.03 **diverges to 10²⁵²**);
+  - Adam and AdaMax run safely with α = 0.1.
+
+---
+
+## 5. Bias correction, and why it matters (Section 3)
+
+- **The statement:** for slowly changing gradients, E[v_t] = E[g²]·(1 − β₂ᵗ) + a small term (section 2.1), so dividing by (1 − β₂ᵗ) removes the bias.
+- **Why it matters most for sparse problems:**
+  - Sparse gradients (mostly zeros, with occasional values) **need β₂ close to 1**, so that v remembers the rare non-zero gradients.
+  - But β₂ close to 1 makes the start-up bias largest and longest-lasting. Without correction the early steps are 30–100× too big.
+  - **Figure 4** (a VAE): with β₂ = 0.999 or 0.9999, training without correction is unstable early on.
+  - RMSProp has this problem.
+
+---
+
+## 6. Convergence (Section 4)
+
+- **The framework: online convex optimization.**
+  - At each step t a new convex loss f_t arrives.
+  - **Regret** R(T) = Σ_t [f_t(θ_t) − f_t(θ*)] is the total extra loss compared with the best fixed parameter θ* in hindsight.
+  - If R(T)/T → 0, the algorithm does as well on average as the best fixed answer.
+- **Theorem 4.1:**
+  - the conditions are α_t = α/√t and β₁ decaying (β₁,t = β₁λ^{t−1});
+  - under them Adam's regret is **O(√T)**, so R(T)/T = O(1/√T) → 0;
+  - this is the best possible rate for this setting, and like AdaGrad it is much better when gradients are sparse.
+- **A caveat** (later work, not in the paper):
+  - Reddi et al. (2018, "On the Convergence of Adam and Beyond") found an error in this proof and built simple convex problems where Adam does **not** converge. The problem is that v̂ can shrink, so the effective learning rate can *increase*.
+  - Their fix, **AMSGrad**, uses the running maximum of v̂.
+  - In practice Adam still works very well.
+
+---
+
+## 7. Related methods (Section 5)
 
 | Method | Relation to Adam |
 |---|---|
-| **RMSProp** | Adam without bias correction (and with momentum applied to the rescaled gradient rather than to g) |
-| **AdaGrad** | Adam with β1 = 0, β2 → 1 and α_t = α/√t: then v̂_t = (1/t)Σg², and α/√t · g/√((1/t)Σg²) = α·g/√Σg². **Exactly AdaGrad.** |
-| **Natural gradient / Fisher** | v̂ is a diagonal approximation to the Fisher information. Adam uses its **square root**, which is more conservative than the natural gradient. |
+| **RMSProp** | Adam without bias correction (and with momentum applied to the rescaled gradient, if used) |
+| **AdaGrad** | set β₁ = 0, β₂ → 1, α_t = α/√t. Then v̂_t → (1/t)Σg², and the step is (α/√t)·g/√((1/t)Σg²) = **α·g/√(Σg²)**: exactly AdaGrad. Our code reproduces this to 10⁻⁵ |
+| **natural gradient** | v̂ is a diagonal estimate of the Fisher information (the curvature of the log-likelihood). The natural gradient divides by F; Adam divides by **√F**, which is more conservative |
 
 ---
 
-## 7. Experiments (Section 6)
+## 8. Experiments (Section 6)
 
-All use the same models and initialization across optimizers; hyperparameters are chosen by a dense grid search.
+All optimizers share the same models and initialization; hyperparameters come from dense grid searches.
 
 | Figure | Problem | Result |
 |---|---|---|
-| **1 (left)** | MNIST logistic regression, L2, α/√t decay, minibatch 128 | Adam ≈ SGD + Nesterov, both faster than AdaGrad |
-| **1 (right)** | IMDB bag-of-words (10,000 features, sparse), 50% dropout on inputs | Adam ≈ AdaGrad, both ≫ SGD Nesterov; RMSProp is also good. Sparse features favor adaptive methods |
-| **2** | MNIST MLP, 2×1000 ReLU, dropout | Adam fastest of AdaGrad, RMSProp, SGD Nesterov, AdaDelta. Also faster than the quasi-Newton SFO (which can't handle dropout noise) |
-| **3** | CIFAR-10 CNN: c64-c64-c128-1000 (5×5 conv, 3×3 max-pool stride 2), 45 epochs | Adam ≈ SGD Nesterov, both much better than AdaGrad. **Early on AdaGrad is fast, then stalls:** v fills up, and in CNNs the gradient scale matters less |
-| **4** | VAE (500 softplus hidden, 50-d latent), bias correction on/off, β1 ∈ {0, 0.9}, β2 ∈ {0.99, 0.999, 0.9999}, log10 α ∈ [−5, −1] | With β2 close to 1, **no bias correction** is unstable, especially early in training. Adam with correction is as good as or better than RMSProp everywhere |
+| **1 (left)** | MNIST logistic regression, L2, α/√t decay, minibatch 128 | Adam ≈ SGD+Nesterov, both faster than AdaGrad |
+| **1 (right)** | IMDB bag of words (10,000 sparse features), 50% input dropout | Adam ≈ AdaGrad ≫ SGD+Nesterov. **Sparse features favour per-weight rates** |
+| **2** | MNIST MLP 2×1000 ReLU, dropout | Adam fastest (vs AdaGrad, RMSProp, SGD+Nesterov, AdaDelta); also beats the quasi-Newton SFO, which can't handle dropout noise |
+| **3** | CIFAR-10 CNN c64-c64-c128-1000, 45 epochs | Adam ≈ SGD+Nesterov ≫ AdaGrad. **AdaGrad starts fast, then stalls:** its Σg² keeps growing, so its steps keep shrinking |
+| **4** | VAE, bias correction on/off, β₁ ∈ {0, 0.9}, β₂ ∈ {0.99, 0.999, 0.9999} | without correction, β₂ near 1 is unstable; Adam with correction ≥ RMSProp everywhere |
 
 ---
 
-## 8. Extensions (Section 7)
+## 9. Extensions (Section 7)
 
-### 7.1 AdaMax
-Generalize v from the L2 norm to Lp: v_t = β2^p·v_{t−1} + (1 − β2^p)|g_t|^p. As p → ∞, this becomes simple:
-```
-u_t = max(β2·u_{t−1}, |g_t|)                   no bias correction needed
-θ_t = θ_{t−1} − (α / (1 − β1^t)) · m_t / u_t
-```
-- |step| ≤ α **always**.
-- Defaults: α = 0.002, β1 = 0.9, β2 = 0.999.
+### 9.1 AdaMax
+- **Generalize** v from squares (the L2 norm) to p-th powers (the Lp norm):
+  ```
+  v_t = β₂ᵖ v_{t−1} + (1 − β₂ᵖ)|g_t|ᵖ,      step ∝ m / v_t^{1/p}
+  ```
+- **As p → ∞,** the p-th root of a weighted sum of p-th powers tends to the **largest** term. (For big p, the biggest number dominates a sum of powers: (aᵖ + bᵖ)^{1/p} → max(a, b).) So:
+  ```
+  u_t = max(β₂ · u_{t−1}, |g_t|)                 no bias correction needed (max isn't pulled toward 0)
+  θ_t = θ_{t−1} − (α / (1 − β₁ᵗ)) · m_t / u_t
+  ```
+- **A hard bound:** u_t ≥ |every recent gradient|, so **|step| ≤ α always**. Our test confirms this even for heavy-tailed (Cauchy) gradients.
+- **Defaults:** α = 0.002, β₁ = 0.9, β₂ = 0.999.
 
-### 7.2 Temporal averaging
-The last iterate is noisy, so evaluate on an **exponential moving average of the parameters**, θ̄_t = β2·θ̄_{t−1} + (1 − β2)·θ_t, bias-corrected in the same way (θ̂ = θ̄/(1 − β2^t)). This is the ancestor of the "EMA weights" used in today's image models and LLM training.
+### 9.2 Temporal averaging
+- **The problem:** the last iterate is noisy.
+- **The fix:** evaluate an EMA of the **parameters**, θ̄_t = β₂θ̄_{t−1} + (1 − β₂)θ_t, bias-corrected as in section 2.1.
+- **Legacy:** this is the ancestor of the "EMA weights" used to train today's image generators and LLMs.
 
 ---
 
-## 9. What our code found
+## 10. What our code found
 
-**Scale note:** at your request, the neural-network experiments (Figures 1–4) were **not run** on this laptop. `experiments.py` reproduces each figure (from minutes to hours per figure). IMDB is replaced by 20 Newsgroups (also a sparse 10,000-word bag-of-words) because it ships with scikit-learn.
+**Scale note:** at your request, the neural-network experiments (Figures 1–4) were **not run** on this laptop. `experiments.py` reproduces each figure. IMDB is replaced by 20 Newsgroups, also a sparse 10,000-word bag of words, because it ships with scikit-learn.
 
 **Checked (tests and demo, under a second):**
-- Our Algorithm 1 gives **the same iterates as `torch.optim.Adam`**.
-- The first step is exactly α·sign(g), for gradients of 0.001, 1 or 1000.
-- Scaling every gradient by 1000 leaves the path unchanged (with ε = 0).
-- Steps respect the α(1 − β1)/√(1 − β2) bound; the median step is < α.
-- Bias correction: with a constant gradient 2, v̂_t = 4 exactly from t = 1, while raw v_1 = 0.004.
-- Without it, with β1 = 0 and β2 = 0.9999, the first step is **1.0 instead of 0.01** (100× too big).
-- Adam with β1 = 0, β2 → 1 and α/√t reproduces **AdaGrad** to 10⁻⁵.
-- AdaMax's u_t equals the limit of the Lp norm (checked at p = 400), and AdaMax never steps more than α, even with Cauchy (heavy-tailed) gradients.
-- **The demo's badly scaled quadratic** (curvatures 1 and 100):
-  - SGD Nesterov needs a hand-picked learning rate: 0.005 works, while 0.03 **diverges to 10²⁵²**. Adam and AdaMax run safely with α = 0.1.
-  - AdaDelta barely moves in 200 steps, because its steps start at ~√ε.
-- **The demo's noisy gradients:** Adam's momentum puts it ~5× closer to the minimum than RMSProp without momentum. The α/√t schedule was slower here: it shrinks the steps before arriving.
+- **Our Algorithm 1 = `torch.optim.Adam`,** iterate for iterate.
+- **First step = exactly α·sign(g)** for gradients 0.001, 1 and 1000.
+- **Scaling all gradients by 1000 leaves the path unchanged** (ε = 0).
+- **Steps respect the α(1 − β₁)/√(1 − β₂) bound;** the median step is < α.
+- **Bias correction:** with constant gradient 2, v̂_t = 4 exactly from t = 1 (raw v_1 = 0.004). Without correction, the first step is **1.0 instead of 0.01** (β₁ = 0, β₂ = 0.9999).
+- **Adam → AdaGrad** in the limit, to 10⁻⁵.
+- **AdaMax:** its u_t equals the Lp limit (checked at p = 400), and its steps never exceed α.
+- **Badly scaled quadratic** (curvatures 1 and 100, 200 steps; final loss):
+
+  | optimizer | final loss |
+  |---|---|
+  | AdaGrad | 2.5e-14 |
+  | AdaMax | 1.1e-8 |
+  | Adam | 1.6e-7 |
+  | SGD+Nesterov (hand-tuned lr) | 1.3e-9 |
+  | RMSProp (no momentum) | 2.7e-2: it jitters at a distance ~α |
+  | AdaDelta | 69: it hardly moves, since its first steps are ~√ε |
+
+- **Noisy gradients** (noise std 5), mean |x| over the last 500 steps:
+
+  | optimizer | mean \|x\| |
+  |---|---|
+  | RMSProp | 0.306 |
+  | **Adam** | **0.062**: momentum averages the noise, ~5× closer |
+  | Adam with α/√t | 0.861: the steps shrink before arriving. Decay schedules need tuning too |
 
 ---
 
-## 10. Check yourself
+## 11. Check yourself
 
-1. Write Algorithm 1 from memory. What do m and v estimate?
-2. Why is the first step exactly α·sign(g)?
-3. Show that v_t = g²(1 − β2^t) for a constant gradient. Why is bias correction most important when β2 is close to 1?
-4. Why does Adam take small steps near a minimum, even with a constant α?
-5. Derive AdaGrad from Adam (β1 = 0, β2 → 1, α_t = α/√t).
-6. Why does the AdaMax update never exceed α?
-7. In Figure 3, why does AdaGrad start fast on the CNN and then stall?
+1. Unroll a_t = βa_{t−1} + (1 − β)x_t. Why is its effective window ≈ 1/(1 − β)?
+2. Show that the weights sum to 1 − βᵗ, and hence why we divide by it.
+3. Write Algorithm 1. What do m and v estimate?
+4. Compute the first Adam step for g = 5. (It's α, in the direction of the gradient's sign.)
+5. Derive the worst-case step α(1 − β₁)/√(1 − β₂). What is it with the defaults?
+6. Why does Adam take small steps near a minimum even with constant α?
+7. Derive AdaGrad from Adam.
+8. Why does AdaMax's step never exceed α?
+9. In Figure 3, why does AdaGrad start fast on the CNN and then stall?

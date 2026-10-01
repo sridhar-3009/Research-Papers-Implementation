@@ -33,7 +33,12 @@ print("   true weights: [1, 1, 1];  input spreads: [1.0, 3.0, 0.3]")
 for p in (1.0, 0.8, 0.5, 0.2):
     w = p * dropout_linear_regression_closed_form(X, y, p) if p < 1 else np.linalg.lstsq(X, y, rcond=None)[0]
     print(f"   p = {p}: effective weights (p * w) = {np.round(w, 3)}")
-print("   Smaller p = stronger shrinkage, and inputs with big spread (column 2) are squeezed hardest.")
+print("   Smaller p = stronger shrinkage: each effective weight is pulled toward p * (true weight).")
+print("   The penalty p(1-p)||Gamma w||^2 grows with each input's spread, which exactly cancels the")
+print("   spread's effect on the fit: with uncorrelated inputs EVERY weight shrinks by the same factor p")
+print("   (plain ridge would squeeze the low-spread column 3 hardest). Column 3 strays here only because")
+print("   with 200 samples it happens to correlate with the big column 2; with 200,000 samples all three")
+print("   come out at 0.50 for p = 0.5.")
 
 section("4. A dropout net in one line")
 net = Net([784, 1024, 1024, 2048, 10], p_input=0.8, p_hidden=0.5, act="relu")
