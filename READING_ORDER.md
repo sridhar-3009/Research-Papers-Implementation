@@ -102,7 +102,7 @@ Each stage is a folder in this repository, and each paper has its own folder ins
 | 043 | Chen et al. (2016), *InfoGAN* | GANs with meaningful controls | ★★ | ✅ |
 | 044 | Arjovsky, Chintala & Bottou (2017), *Wasserstein GAN* | Stable GAN training | ★★★ | ✅ |
 | 045 | Salimans et al. (2017), *PixelCNN++* | Generating images pixel by pixel *(optional)* | ★★ | ✅ |
-| 046 | Kingma & Dhariwal (2018), *Glow* | Invertible networks (normalizing flows) *(optional)* | ★★★ | |
+| 046 | Kingma & Dhariwal (2018), *Glow* | Invertible networks (normalizing flows) *(optional)* | ★★★ | ✅ |
 | 047 | Ramesh et al. (2021), *Zero-Shot Text-to-Image Generation* (DALL-E) | Text → image with a transformer | ★★ | |
 
 ## Stage 08: Pretraining and scaling. How LLMs are made
