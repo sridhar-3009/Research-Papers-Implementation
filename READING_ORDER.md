@@ -103,7 +103,7 @@ Each stage is a folder in this repository, and each paper has its own folder ins
 | 044 | Arjovsky, Chintala & Bottou (2017), *Wasserstein GAN* | Stable GAN training | ★★★ | ✅ |
 | 045 | Salimans et al. (2017), *PixelCNN++* | Generating images pixel by pixel *(optional)* | ★★ | ✅ |
 | 046 | Kingma & Dhariwal (2018), *Glow* | Invertible networks (normalizing flows) *(optional)* | ★★★ | ✅ |
-| 047 | Ramesh et al. (2021), *Zero-Shot Text-to-Image Generation* (DALL-E) | Text → image with a transformer | ★★ | |
+| 047 | Ramesh et al. (2021), *Zero-Shot Text-to-Image Generation* (DALL-E) | Text → image with a transformer | ★★ | ✅ |
 
 ## Stage 08: Pretraining and scaling. How LLMs are made
 **Why here:** you know transformers (Stage 06). Now: pretrain them on huge text, then make them bigger.
