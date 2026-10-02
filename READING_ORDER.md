@@ -96,7 +96,7 @@ Each stage is a folder in this repository, and each paper has its own folder ins
 | # | Paper | You'll learn | Level | Status |
 |---|---|---|---|---|
 | 039 | Kingma & Welling (2014), *Auto-Encoding Variational Bayes* | The **VAE** and the reparameterization trick | ★★★ | ✅ |
-| 040 | Kingma et al. (2016), *Improved Variational Inference with Inverse Autoregressive Flow* | Better VAEs with flows *(optional)* | ★★★ | |
+| 040 | Kingma et al. (2016), *Improved Variational Inference with Inverse Autoregressive Flow* | Better VAEs with flows *(optional)* | ★★★ | ✅ |
 | 041 | Chen et al. (2017), *Variational Lossy Autoencoder* | Controlling what a VAE stores *(optional)* | ★★★ | |
 | 042 | Goodfellow et al. (2014), *Generative Adversarial Nets* | **GANs**: generator vs discriminator | ★★ | |
 | 043 | Chen et al. (2016), *InfoGAN* | GANs with meaningful controls | ★★ | |
