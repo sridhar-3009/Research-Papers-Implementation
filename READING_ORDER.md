@@ -88,7 +88,7 @@ Each stage is a folder in this repository, and each paper has its own folder ins
 | 035 | Shazeer (2019), *Fast Transformer Decoding: One Write-Head is All You Need* | **Multi-Query Attention**: faster inference | ★★ | ✅ |
 | 036 | Child et al. (2019), *Generating Long Sequences with Sparse Transformers* | Sparse attention for long inputs | ★★ | ✅ |
 | 037 | Devlin et al. (2019), *BERT* | **Bidirectional** pretraining with masked words | ★★ | ✅ |
-| 038 | Dosovitskiy et al. (2021), *An Image is Worth 16x16 Words* (ViT) | Transformers for **images** | ★★ | |
+| 038 | Dosovitskiy et al. (2021), *An Image is Worth 16x16 Words* (ViT) | Transformers for **images** | ★★ | ✅ |
 
 ## Stage 07: Generative models. Networks that create
 **Why here:** these need probability plus the networks you know. VAEs and GANs are the two big ideas; the rest improve on them.
