@@ -117,7 +117,7 @@ Each stage is a folder in this repository, and each paper has its own folder ins
 | 052 | Hoffmann et al. (2022), *Training Compute-Optimal LLMs* (Chinchilla) | **Correction to Kaplan:** train on far more data | ★★ | ✅ |
 | 053 | Radford et al. (2021), *CLIP* | Images and text in one space; zero-shot vision | ★★ | ✅ |
 | 054 | Chen et al. (2021), *Evaluating LLMs Trained on Code* (Codex) | Code models; **pass@k** evaluation | ★ | ✅ |
-| 055 | Radford et al. (2023), *Robust Speech Recognition via Large-Scale Weak Supervision* (Whisper) | Speech recognition from 680k hours | ★ | |
+| 055 | Radford et al. (2023), *Robust Speech Recognition via Large-Scale Weak Supervision* (Whisper) | Speech recognition from 680k hours | ★ | ✅ |
 | 056 | Touvron et al. (2023), *LLaMA* | Open models: RMSNorm, SwiGLU, RoPE | ★ | |
 | 057 | OpenAI (2023), *GPT-4 Technical Report* | What's reported (and not) about GPT-4 *(optional)* | ★ | |
 | 058 | OpenAI (2024), *GPT-4o System Card* | How safety evaluation is done *(optional)* | ★ | |
