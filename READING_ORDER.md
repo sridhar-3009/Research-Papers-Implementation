@@ -120,7 +120,7 @@ Each stage is a folder in this repository, and each paper has its own folder ins
 | 055 | Radford et al. (2023), *Robust Speech Recognition via Large-Scale Weak Supervision* (Whisper) | Speech recognition from 680k hours | ★ | ✅ |
 | 056 | Touvron et al. (2023), *LLaMA* | Open models: RMSNorm, SwiGLU, RoPE | ★ | ✅ |
 | 057 | OpenAI (2023), *GPT-4 Technical Report* | What's reported (and not) about GPT-4 *(optional)* | ★ | ✅ |
-| 058 | OpenAI (2024), *GPT-4o System Card* | How safety evaluation is done *(optional)* | ★ | |
+| 058 | OpenAI (2024), *GPT-4o System Card* | How safety evaluation is done *(optional)* | ★ | ✅ |
 
 ## Stage 09: Reasoning and agents. Getting more out of LLMs
 **Why here:** you know what LLMs are. Now: make them reason, check their work, and use tools.
