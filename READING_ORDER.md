@@ -112,7 +112,7 @@ Each stage is a folder in this repository, and each paper has its own folder ins
 |---|---|---|---|---|
 | 048 | Radford et al. (2018), *Improving Language Understanding by Generative Pre-Training* (GPT) | Pretrain, then fine-tune | ★ | ✅ |
 | 049 | Radford et al. (2019), *Language Models are Unsupervised Multitask Learners* (GPT-2) | One model does many tasks without fine-tuning | ★ | ✅ |
-| 050 | Brown et al. (2020), *Language Models are Few-Shot Learners* (GPT-3) | **In-context learning** at 175B parameters | ★★ (read Sections 1–3) | |
+| 050 | Brown et al. (2020), *Language Models are Few-Shot Learners* (GPT-3) | **In-context learning** at 175B parameters | ★★ (read Sections 1–3) | ✅ |
 | 051 | Kaplan et al. (2020), *Scaling Laws for Neural Language Models* | Loss falls as a **power law** with size, data and compute | ★★ | |
 | 052 | Hoffmann et al. (2022), *Training Compute-Optimal LLMs* (Chinchilla) | **Correction to Kaplan:** train on far more data | ★★ | |
 | 053 | Radford et al. (2021), *CLIP* | Images and text in one space; zero-shot vision | ★★ | |
