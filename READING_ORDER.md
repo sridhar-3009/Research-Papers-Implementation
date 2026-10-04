@@ -176,7 +176,7 @@ Each stage is a folder in this repository, and each paper has its own folder ins
 | 081 | Zinkevich et al. (2010), *Parallelized Stochastic Gradient Descent* | The start of distributed SGD *(PDF: see below)* | ★★ | ✅ |
 | 082 | Abadi et al. (2015), *TensorFlow: … Heterogeneous Distributed Systems* | Dataflow graphs *(optional)* | ★★ | ✅ |
 | 083 | Abadi et al. (2016), *TensorFlow: A System for Large-Scale ML* | The production TensorFlow design | ★★ | ✅ |
-| 084 | Huang et al. (2019), *GPipe* | **Pipeline** parallelism with micro-batches | ★★ | |
+| 084 | Huang et al. (2019), *GPipe* | **Pipeline** parallelism with micro-batches | ★★ | ✅ |
 | 085 | Narayanan et al. (2019), *PipeDream* | Pipeline parallelism, improved | ★★ | |
 | 086 | Rajbhandari et al. (2020), *ZeRO* | Split optimizer state across GPUs (DeepSpeed) | ★★ | |
 
