@@ -68,7 +68,7 @@ X_q = α · round(X / α),     α = max|X| / (2^(N−1) − 1)
 ## 4. Why it matters
 - **The first practical QAT for LLMs.** Its key move, using the model's own generations as data, removes QAT's biggest obstacle.
 - **It shows that the KV cache can be quantized to 4 bits**, which matters for long contexts and large batches.
-- **Self-distillation from generated data** also appears in later compression work (pruning, distillation of smaller models, Llama-3.2 1B/3B).
+- **Distilling a compressed model on the original model's own outputs** became a common tool in later compression work (pruning and distillation into smaller models).
 
 ---
 
