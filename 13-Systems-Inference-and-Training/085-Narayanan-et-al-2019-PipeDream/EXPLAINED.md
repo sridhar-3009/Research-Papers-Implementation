@@ -8,7 +8,7 @@
 
 ## 1. Why not just data parallelism?
 - **Data parallelism** (each GPU has a full copy of the model; gradients are all-reduced every step) must communicate **all the weights** every minibatch.
-- **For models with many weights** (e.g. VGG-16's huge fully-connected layers) on fast GPUs, communication can take most of the time (the paper shows up to ~90% for some models).
+- **For models with many weights** (e.g. VGG-16's huge fully-connected layers) on fast GPUs, communication can take most of the time (up to 85% of total training time in the paper's measurements).
 - **Model or pipeline parallelism** only sends **activations** at stage boundaries, which is often far less data. But naive pipelines leave GPUs idle, and asynchronous ones mix weight versions.
 
 ---
