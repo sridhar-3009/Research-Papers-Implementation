@@ -220,4 +220,4 @@ The reader can only answer from what was retrieved, so **retrieval quality is QA
 <details><summary>Answer</summary>The fraction of questions for which at least one of the 20 retrieved passages contains the answer string.</details>
 
 10. What is the trade-off in DPR's speed?
-<details><summary>Answer</summary>Search is very fast (995 q/s vs 23.7 for Lucene), but building the index is expensive: encoding 21M passages took about 8.8 GPU-hours × 8 GPUs, plus 8.5 hours of FAISS indexing, vs about 30 minutes for an inverted index. Updating the corpus also needs re-encoding.</details>
+<details><summary>Answer</summary>Search is very fast (995 q/s vs 23.7 for Lucene), but building the index is expensive: encoding 21M passages took about 8.8 hours on 8 GPUs, plus 8.5 hours of FAISS indexing, vs about 30 minutes for an inverted index. Updating the corpus also needs re-encoding.</details>
