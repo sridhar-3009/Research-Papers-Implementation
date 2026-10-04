@@ -84,7 +84,7 @@ O(N + (L/K) · (N/M))
 
 ### Applications
 - **AmoebaNet-B (18, 512):** 557M parameters, 480×480 inputs, 4 partitions, **84.4% top-1** on ImageNet-2012. It transfers well to other datasets.
-- **A 128-layer, 6B-parameter multilingual Transformer** for 103 languages (102 → English), trained as **one model**. It beats strong bilingual baselines, with gains largest for low-resource languages. Deeper models help more than wider ones at equal parameter count. Larger batches help BLEU.
+- **A 128-layer, 6B-parameter multilingual Transformer** for 103 languages (102 → English), trained as **one model**. It beats strong bilingual baselines, with huge gains for low-resource languages from transfer. A deeper 1.3B model matches an equally sized wider one on high-resource languages and beats it by large margins on low-resource ones. Larger batches help BLEU.
 
 ---
 
