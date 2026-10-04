@@ -171,7 +171,7 @@ Each stage is a folder in this repository, and each paper has its own folder ins
 
 | # | Paper | You'll learn | Level | Status |
 |---|---|---|---|---|
-| 079 | Dao et al. (2022), *FlashAttention* | **Tiled** attention that respects GPU memory | ★★★ | |
+| 079 | Dao et al. (2022), *FlashAttention* | **Tiled** attention that respects GPU memory | ★★★ | ✅ |
 | 080 | Pope et al. (2022), *Efficiently Scaling Transformer Inference* | Partitioning, KV cache, latency vs throughput | ★★★ | |
 | 081 | Zinkevich et al. (2010), *Parallelized Stochastic Gradient Descent* | The start of distributed SGD *(PDF: see below)* | ★★ | |
 | 082 | Abadi et al. (2015), *TensorFlow: … Heterogeneous Distributed Systems* | Dataflow graphs *(optional)* | ★★ | |
