@@ -151,7 +151,7 @@ Each stage is a folder in this repository, and each paper has its own folder ins
 | # | Paper | You'll learn | Level | Status |
 |---|---|---|---|---|
 | 070 | Karpukhin et al. (2020), *Dense Passage Retrieval* | Search with embeddings instead of keywords | ★★ | ✅ |
-| 071 | Lewis et al. (2020), *Retrieval-Augmented Generation* | **RAG**: retrieve, then generate | ★★ | |
+| 071 | Lewis et al. (2020), *Retrieval-Augmented Generation* | **RAG**: retrieve, then generate | ★★ | ✅ |
 | 072 | Izacard et al. (2022), *Atlas* | Retrieval + few-shot learning | ★★ | |
 
 ## Stage 12: Efficient fine-tuning and quantization. Big models on small hardware
