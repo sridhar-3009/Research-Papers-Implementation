@@ -142,7 +142,7 @@ Each stage is a folder in this repository, and each paper has its own folder ins
 |---|---|---|---|---|
 | 066 | Stiennon et al. (2020), *Learning to Summarize from Human Feedback* | **Reward models** + RL from human feedback | ★★ | ✅ |
 | 067 | Ouyang et al. (2022), *Training Language Models to Follow Instructions* (InstructGPT) | The full **RLHF** recipe: SFT → reward model → PPO | ★★ | ✅ |
-| 068 | Bai et al. (2022), *Constitutional AI* | AI feedback instead of human feedback | ★★ | |
+| 068 | Bai et al. (2022), *Constitutional AI* | AI feedback instead of human feedback | ★★ | ✅ |
 | 069 | Rafailov et al. (2023), *Direct Preference Optimization* (DPO) | Alignment **without** RL, as a simple loss | ★★ | |
 
 ## Stage 11: Retrieval (RAG). Giving models knowledge
