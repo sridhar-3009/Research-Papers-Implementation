@@ -74,7 +74,7 @@ Only full partitioning fits 1T parameters on 32 GB GPUs: 16 TB / 1024 = 15.6 GB 
 - **Over 100B parameters on 400 V100 GPUs at 15 PFlops** (about 38 TFlops per GPU), with **super-linear** scaling: more GPUs leave more memory per GPU for larger batches.
 - **That is 8× larger models and 10× higher throughput** than the state of the art (Megatron-LM, which can't scale efficiently beyond ~40B).
 - **Up to 13B parameters without any model parallelism,** larger than Megatron GPT 8.3B and T5 11B, so ordinary data-parallel code just works.
-- **It trained Turing-NLG (17B),** the largest language model at the time, with a record perplexity.
+- **It trained Turing-NLG (17B),** the largest language model at the time, with record-breaking accuracy.
 - **The analysis shows all three stages could train a 1T-parameter model on 1024 GPUs.**
 
 ---
