@@ -131,7 +131,7 @@ Each stage is a folder in this repository, and each paper has its own folder ins
 | 060 | Kojima et al. (2022), *Large Language Models are Zero-Shot Reasoners* | "Let's think step by step" | ★ | ✅ |
 | 061 | Cobbe et al. (2021), *Training Verifiers to Solve Math Word Problems* | A second model **checks** answers (GSM8K) | ★★ | ✅ |
 | 062 | Yao et al. (2023), *ReAct* | **Reason + act** loops, the basis of agents | ★ | ✅ |
-| 063 | Nakano et al. (2021), *WebGPT* | An LLM that **browses the web** | ★★ | |
+| 063 | Nakano et al. (2021), *WebGPT* | An LLM that **browses the web** | ★★ | ✅ |
 | 064 | Park et al. (2023), *Generative Agents* | Agents with memory, reflection, planning | ★ | |
 | 065 | Wang et al. (2023), *A Survey on LLM-based Autonomous Agents* | The whole agent field *(survey)* | ★★ | |
 
