@@ -128,7 +128,7 @@ Each stage is a folder in this repository, and each paper has its own folder ins
 | # | Paper | You'll learn | Level | Status |
 |---|---|---|---|---|
 | 059 | Wei et al. (2022), *Chain-of-Thought Prompting* | Step-by-step examples → better reasoning | ★ | ✅ |
-| 060 | Kojima et al. (2022), *Large Language Models are Zero-Shot Reasoners* | "Let's think step by step" | ★ | |
+| 060 | Kojima et al. (2022), *Large Language Models are Zero-Shot Reasoners* | "Let's think step by step" | ★ | ✅ |
 | 061 | Cobbe et al. (2021), *Training Verifiers to Solve Math Word Problems* | A second model **checks** answers (GSM8K) | ★★ | |
 | 062 | Yao et al. (2023), *ReAct* | **Reason + act** loops, the basis of agents | ★ | |
 | 063 | Nakano et al. (2021), *WebGPT* | An LLM that **browses the web** | ★★ | |
