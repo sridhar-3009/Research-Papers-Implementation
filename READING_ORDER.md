@@ -163,7 +163,7 @@ Each stage is a folder in this repository, and each paper has its own folder ins
 | 074 | Xiao et al. (2023), *SmoothQuant* | **INT8** inference: move the difficulty from activations to weights | ★★ | ✅ |
 | 075 | Frantar et al. (2023), *GPTQ* | **4-bit** weights, after training | ★★★ | ✅ |
 | 076 | Lin et al. (2023), *AWQ* | Protect the important weights when quantizing | ★★ | ✅ |
-| 077 | Dettmers et al. (2023), *QLoRA* | LoRA on a 4-bit model: fine-tune on one GPU | ★★ | |
+| 077 | Dettmers et al. (2023), *QLoRA* | LoRA on a 4-bit model: fine-tune on one GPU | ★★ | ✅ |
 | 078 | Liu et al. (2023), *LLM-QAT* | Quantization-**aware** training | ★★ | |
 
 ## Stage 13: Systems. Fast inference and huge-scale training
