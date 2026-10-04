@@ -178,7 +178,7 @@ Each stage is a folder in this repository, and each paper has its own folder ins
 | 083 | Abadi et al. (2016), *TensorFlow: A System for Large-Scale ML* | The production TensorFlow design | ★★ | ✅ |
 | 084 | Huang et al. (2019), *GPipe* | **Pipeline** parallelism with micro-batches | ★★ | ✅ |
 | 085 | Narayanan et al. (2019), *PipeDream* | Pipeline parallelism, improved | ★★ | ✅ |
-| 086 | Rajbhandari et al. (2020), *ZeRO* | Split optimizer state across GPUs (DeepSpeed) | ★★ | |
+| 086 | Rajbhandari et al. (2020), *ZeRO* | Split optimizer state across GPUs (DeepSpeed) | ★★ | ✅ |
 
 ## Stage 14: Production ML (MLOps). Keeping ML working in the real world
 **Why last among the core stages:** these papers make the most sense once you've built models yourself.
