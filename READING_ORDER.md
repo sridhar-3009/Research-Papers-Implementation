@@ -132,7 +132,7 @@ Each stage is a folder in this repository, and each paper has its own folder ins
 | 061 | Cobbe et al. (2021), *Training Verifiers to Solve Math Word Problems* | A second model **checks** answers (GSM8K) | ★★ | ✅ |
 | 062 | Yao et al. (2023), *ReAct* | **Reason + act** loops, the basis of agents | ★ | ✅ |
 | 063 | Nakano et al. (2021), *WebGPT* | An LLM that **browses the web** | ★★ | ✅ |
-| 064 | Park et al. (2023), *Generative Agents* | Agents with memory, reflection, planning | ★ | |
+| 064 | Park et al. (2023), *Generative Agents* | Agents with memory, reflection, planning | ★ | ✅ |
 | 065 | Wang et al. (2023), *A Survey on LLM-based Autonomous Agents* | The whole agent field *(survey)* | ★★ | |
 
 ## Stage 10: Alignment. Teaching models what people want
