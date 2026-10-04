@@ -159,7 +159,7 @@ Each stage is a folder in this repository, and each paper has its own folder ins
 
 | # | Paper | You'll learn | Level | Status |
 |---|---|---|---|---|
-| 073 | Hu et al. (2022), *LoRA* | Fine-tune with small **low-rank** updates | ★★ | |
+| 073 | Hu et al. (2022), *LoRA* | Fine-tune with small **low-rank** updates | ★★ | ✅ |
 | 074 | Xiao et al. (2023), *SmoothQuant* | **INT8** inference: move the difficulty from activations to weights | ★★ | |
 | 075 | Frantar et al. (2023), *GPTQ* | **4-bit** weights, after training | ★★★ | |
 | 076 | Lin et al. (2023), *AWQ* | Protect the important weights when quantizing | ★★ | |
