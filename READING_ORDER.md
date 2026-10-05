@@ -209,7 +209,7 @@ Each stage is a folder in this repository, and each paper has its own folder ins
 | 100 | Sutskever & Hinton (2008), *Using Matrices to Model Symbolic Relationships* | Relational learning | ★★ | ✅ |
 | 101 | Sutskever, Salakhutdinov & Tenenbaum (2009), *Bayesian Clustered Tensor Factorization* | Tensor models of relations | ★★★ | ✅ |
 | 102 | Brundage et al. (2018), *The Malicious Use of Artificial Intelligence* | AI security threats | ★ | ✅ |
-| 103 | Acemoglu & Restrepo (2019), *Automation and New Tasks* | AI's effect on jobs (economics) | ★★ | see below |
+| 103 | Acemoglu & Restrepo (2019), *Automation and New Tasks* | AI's effect on jobs (economics) | ★★ | ✅ |
 
 ---
 
