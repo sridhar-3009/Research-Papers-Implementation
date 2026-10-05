@@ -189,7 +189,7 @@ Each stage is a folder in this repository, and each paper has its own folder ins
 | 088 | Sculley et al. (2015), *Hidden Technical Debt in Machine Learning Systems* | The full picture: the model is a tiny part of the system | ★ | ✅ |
 | 089 | Breck et al. (2017), *The ML Test Score* | A 28-test checklist for production readiness | ★ | ✅ |
 | 090 | Zinkevich, *Rules of Machine Learning* (Google, web page) | 43 practical rules | ★ | ✅ |
-| 091 | Rabanser et al. (2019), *Failing Loudly* | Detecting **data drift** | ★★ | |
+| 091 | Rabanser et al. (2019), *Failing Loudly* | Detecting **data drift** | ★★ | ✅ |
 | 092 | Huyen, *Data Distribution Shifts and Monitoring* (blog post) | Drift in practice | ★ | see links below |
 | 093 | Mitchell et al. (2019), *Model Cards for Model Reporting* | Documenting models responsibly | ★ | |
 | 094 | Huyen (2022), *Designing Machine Learning Systems* (book) | The whole ML-system lifecycle | ★★ | book, not free |
