@@ -197,7 +197,7 @@ Each stage is a folder in this repository, and each paper has its own folder ins
 ## Stage 15: Reinforcement learning *(optional)*
 | # | Paper | You'll learn | Level | Status |
 |---|---|---|---|---|
-| 095 | Salimans et al. (2017), *Evolution Strategies as a Scalable Alternative to RL* | Optimization without gradients | ★★ | |
+| 095 | Salimans et al. (2017), *Evolution Strategies as a Scalable Alternative to RL* | Optimization without gradients | ★★ | ✅ |
 | 096 | Berner et al. (2019), *Dota 2 with Large Scale Deep RL* (OpenAI Five) | RL at huge scale | ★★ | |
 | 097 | Silver et al. (2016), *Mastering the Game of Go* (AlphaGo) | Deep RL + tree search | ★★★ | Nature paywall, see below |
 
