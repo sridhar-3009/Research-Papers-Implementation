@@ -204,7 +204,7 @@ Each stage is a folder in this repository, and each paper has its own folder ins
 ## Stage 16: Extras *(optional)*
 | # | Paper | You'll learn | Level | Status |
 |---|---|---|---|---|
-| 098 | Khosla et al. (2020), *Supervised Contrastive Learning* | Contrastive learning with labels | ★★ | |
+| 098 | Khosla et al. (2020), *Supervised Contrastive Learning* | Contrastive learning with labels | ★★ | ✅ |
 | 099 | Coates & Ng (2011), *The Importance of Encoding Versus Training …* | Early feature learning | ★★ | |
 | 100 | Sutskever & Hinton (2008), *Using Matrices to Model Symbolic Relationships* | Relational learning | ★★ | see below |
 | 101 | Sutskever, Salakhutdinov & Tenenbaum (2009), *Bayesian Clustered Tensor Factorization* | Tensor models of relations | ★★★ | see below |
