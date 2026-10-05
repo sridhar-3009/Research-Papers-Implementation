@@ -207,7 +207,7 @@ Each stage is a folder in this repository, and each paper has its own folder ins
 | 098 | Khosla et al. (2020), *Supervised Contrastive Learning* | Contrastive learning with labels | ★★ | ✅ |
 | 099 | Coates & Ng (2011), *The Importance of Encoding Versus Training …* | Early feature learning | ★★ | ✅ |
 | 100 | Sutskever & Hinton (2008), *Using Matrices to Model Symbolic Relationships* | Relational learning | ★★ | ✅ |
-| 101 | Sutskever, Salakhutdinov & Tenenbaum (2009), *Bayesian Clustered Tensor Factorization* | Tensor models of relations | ★★★ | see below |
+| 101 | Sutskever, Salakhutdinov & Tenenbaum (2009), *Bayesian Clustered Tensor Factorization* | Tensor models of relations | ★★★ | ✅ |
 | 102 | Brundage et al. (2018), *The Malicious Use of Artificial Intelligence* | AI security threats | ★ | |
 | 103 | Acemoglu & Restrepo (2019), *Automation and New Tasks* | AI's effect on jobs (economics) | ★★ | see below |
 
