@@ -76,6 +76,7 @@ Where each PDF was downloaded from.
 12-Efficient-Finetuning-and-Quantization/078-Liu-et-al-2023-LLM-QAT/078-Liu-et-al-2023-LLM-QAT.pdf  <-  https://arxiv.org/abs/2305.17888
 13-Systems-Inference-and-Training/079-Dao-et-al-2022-FlashAttention/079-Dao-et-al-2022-FlashAttention.pdf  <-  https://arxiv.org/abs/2205.14135
 13-Systems-Inference-and-Training/080-Pope-et-al-2022-Efficiently-Scaling-Transformer-Inference/080-Pope-et-al-2022-Efficiently-Scaling-Transformer-Inference.pdf  <-  https://arxiv.org/abs/2211.05102
+13-Systems-Inference-and-Training/081-Zinkevich-et-al-2010-Parallelized-SGD/081-Zinkevich-et-al-2010-Parallelized-SGD.pdf  <-  https://papers.nips.cc/paper/2010/hash/abea47ba24142ed16b7d8fbf2c740e0d-Abstract.html
 13-Systems-Inference-and-Training/082-Abadi-et-al-2015-TensorFlow-Whitepaper/082-Abadi-et-al-2015-TensorFlow-Whitepaper.pdf  <-  https://arxiv.org/abs/1603.04467
 13-Systems-Inference-and-Training/083-Abadi-et-al-2016-TensorFlow-OSDI/083-Abadi-et-al-2016-TensorFlow-OSDI.pdf  <-  https://arxiv.org/abs/1605.08695
 13-Systems-Inference-and-Training/084-Huang-et-al-2019-GPipe/084-Huang-et-al-2019-GPipe.pdf  <-  https://arxiv.org/abs/1811.06965
@@ -88,6 +89,10 @@ Where each PDF was downloaded from.
 14-Production-ML/093-Mitchell-et-al-2019-Model-Cards/093-Mitchell-et-al-2019-Model-Cards.pdf  <-  https://arxiv.org/abs/1810.03993
 15-Reinforcement-Learning-optional/095-Salimans-et-al-2017-Evolution-Strategies/095-Salimans-et-al-2017-Evolution-Strategies.pdf  <-  https://arxiv.org/abs/1703.03864
 15-Reinforcement-Learning-optional/096-Berner-et-al-2019-Dota2-OpenAI-Five/096-Berner-et-al-2019-Dota2-OpenAI-Five.pdf  <-  https://arxiv.org/abs/1912.06680
+15-Reinforcement-Learning-optional/097-Silver-et-al-2016-AlphaGo/097-Silver-et-al-2016-AlphaGo.pdf  <-  https://storage.googleapis.com/deepmind-media/alphago/AlphaGoNaturePaper.pdf
 16-Extras-optional/098-Khosla-et-al-2020-Supervised-Contrastive-Learning/098-Khosla-et-al-2020-Supervised-Contrastive-Learning.pdf  <-  https://arxiv.org/abs/2004.11362
 16-Extras-optional/099-Coates-Ng-2011-Encoding-vs-Training-Sparse-Coding/099-Coates-Ng-2011-Encoding-vs-Training-Sparse-Coding.pdf  <-  https://ai.stanford.edu/~ang/papers/icml11-EncodingVsTraining.pdf
+16-Extras-optional/100-Sutskever-Hinton-2008-Matrices-Symbolic-Relationships/100-Sutskever-Hinton-2008-Matrices-Symbolic-Relationships.pdf  <-  https://papers.nips.cc/paper/2008/file/cfa0860e83a4c3a763a7e62d825349f7-Paper.pdf
+16-Extras-optional/101-Sutskever-Salakhutdinov-Tenenbaum-2009-Bayesian-Clustered-Tensor-Factorization/101-Sutskever-Salakhutdinov-Tenenbaum-2009-Bayesian-Clustered-Tensor-Factorization.pdf  <-  https://proceedings.neurips.cc/paper_files/paper/2009/file/5705e1164a8394aace6018e27d20d237-Paper.pdf
 16-Extras-optional/102-Brundage-et-al-2018-Malicious-Use-of-AI/102-Brundage-et-al-2018-Malicious-Use-of-AI.pdf  <-  https://arxiv.org/abs/1802.07228
+16-Extras-optional/103-Acemoglu-Restrepo-2019-Automation-and-New-Tasks/103-Acemoglu-Restrepo-2019-Automation-and-New-Tasks.pdf  <-  https://docs.iza.org/dp12293.pdf (IZA DP 12293; published in JEP 33(2), https://www.aeaweb.org/articles?id=10.1257/jep.33.2.3)

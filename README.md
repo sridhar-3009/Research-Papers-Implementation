@@ -14,11 +14,11 @@ Implementing the key papers of AI, from the first artificial neuron (1943) to to
       *.py, demo.py, test_*.py          ← the implementation, a demo, and tests
       *.pdf                             ← the paper (kept locally, not on GitHub)
 02-Training-Deep-Networks/
-   006-LeCun-et-al-1998-Efficient-BackProp/  ← not built yet: just the PDF for now
+   002-Rosenblatt-1958/
 ...
 ```
 
-## Built so far
+## All 103 papers
 
 | # | Paper | Year | What's implemented |
 |---|---|---|---|
