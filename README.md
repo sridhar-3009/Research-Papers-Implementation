@@ -1,144 +1,820 @@
-# Research Papers Implementation
+# Implementing 103 AI Research Papers, Explained in Plain Language
 
-Implementing the key papers of AI, from the first artificial neuron (1943) to today's LLMs, **from scratch**: reading each paper closely, rebuilding the method in code, and testing that the code reproduces the paper's claims.
+This repository rebuilds **103 of the most important research papers in artificial intelligence**, from the first artificial neuron in 1943 to today's large language models (the technology behind ChatGPT), and the engineering, safety and economics around them.
 
-**Start here: [READING_ORDER.md](READING_ORDER.md)** has all 103 papers in one learning path, grouped into 16 stages, with why each paper comes where it does.
+For every paper there are three things:
 
-## Layout
+1. **A plain-language explanation** of what the paper says and why it mattered, written for someone who has never studied AI.
+2. **Working code written from scratch**, so you can see the idea actually run instead of only reading about it.
+3. **An honest check**: does our small version behave the way the paper says it should? Where it doesn't, we say so.
+
+You do **not** need to be an expert to use this. If you can read a little Python, or are just curious, you can follow along from paper 001 to paper 103.
+
+> **Where to start:** read this page first. Then open [READING_ORDER.md](READING_ORDER.md) for the full learning path, and open any paper's folder to read its `EXPLAINED.md`.
+
+---
+
+## Contents
+
+1. [What is this project, really?](#1-what-is-this-project-really)
+2. [Who is it for?](#2-who-is-it-for)
+3. [What you will find inside each paper's folder](#3-what-you-will-find-inside-each-papers-folder)
+4. [How to run it on your own computer, step by step](#4-how-to-run-it-on-your-own-computer-step-by-step)
+5. [A two-minute introduction to the words you will see](#5-a-two-minute-introduction-to-the-words-you-will-see)
+6. [The story of AI in 16 stages, and every paper explained](#6-the-story-of-ai-in-16-stages-and-every-paper-explained)
+7. [How honest are the results?](#7-how-honest-are-the-results)
+8. [Other files in this repository](#8-other-files-in-this-repository)
+
+---
+
+## 1. What is this project, really?
+
+Research papers are how new ideas in AI are shared. But papers are written for experts. They are short, full of mathematics, and they skip the steps the authors found obvious. Many people who want to understand AI never get past the first page.
+
+This project takes each paper and does three slow, careful things:
+
+- **Reads it closely**, section by section, and writes down what it actually claims (with the exact numbers from its tables).
+- **Rebuilds the method in code from scratch**, usually with only basic tools (NumPy, sometimes PyTorch), instead of calling a ready-made library that hides how it works.
+- **Tests the code against the paper.** Small automatic tests check that each piece is correct (for example, that a gradient computed by hand matches one measured numerically), and a short demo shows the paper's main effect happening on a small example.
+
+The papers are arranged in an order where **each one only needs the ones before it**. So if you go from 001 to 103, you never meet an idea that hasn't been explained earlier.
+
+**An important limit:** the original papers often trained enormous models on huge datasets with thousands of computers. That is impossible on a laptop. So every paper here is rebuilt at **toy scale**: tiny models, small or synthetic datasets, a few seconds of computation. The goal is to see the *idea* working, not to match the paper's final scores. Where a full-size experiment would be needed, the code for it is written (in `experiments.py`) but was **not run**, and the explanation says so.
+
+---
+
+## 2. Who is it for?
+
+- **Curious beginners** who want to understand how AI actually works, one idea at a time.
+- **Students** who want a guided path through the classic papers, with code they can run and change.
+- **Engineers** who use AI tools and want to know what is happening underneath (attention, fine-tuning, quantization, retrieval, monitoring).
+- **Anyone who reads AI news** and wants to know what words like "transformer", "RLHF", "RAG" or "LoRA" really mean.
+
+What you need:
+
+- **To read the explanations:** nothing. They are written for beginners, with worked examples using small numbers you can follow by hand.
+- **To run the code:** a computer with Python 3.10 or newer. A laptop is enough; nothing here needs a graphics card (GPU).
+
+---
+
+## 3. What you will find inside each paper's folder
+
+Every paper lives in its own folder, numbered 001 to 103, inside a folder for its stage. For example:
 
 ```
-01-Foundations/                         ← a stage (16 stages, in learning order)
-   001-McCulloch-Pitts-1943/            ← one folder per paper, numbered 001–103
-      EXPLAINED.md                      ← the paper, explained simply
-      CODE_EXPLAINED.md                 ← how the code works, mapped to the paper
-      *.py, demo.py, test_*.py          ← the implementation, a demo, and tests
-      *.pdf                             ← the paper (kept locally, not on GitHub)
-02-Training-Deep-Networks/
+01-Foundations/                              ← a stage (there are 16, in learning order)
+   001-McCulloch-Pitts-1943/                 ← one paper
+      EXPLAINED.md                           ← start here: the paper in plain language
+      CODE_EXPLAINED.md                      ← a guided tour of the code
+      mcculloch_pitts.py (name varies)       ← the implementation itself
+      demo.py                                ← a short demonstration you can run
+      test_*.py                              ← automatic checks that the code is correct
+      experiments.py                         ← bigger experiments (from paper 007 on; written, not run)
+      *.pdf                                  ← the original paper (kept on your computer only, not on GitHub)
    002-Rosenblatt-1958/
-...
+   ...
 ```
 
-## All 103 papers
+What each file is for, in more detail:
 
-| # | Paper | Year | What's implemented |
-|---|---|---|---|
-| 001 | [A Logical Calculus of the Ideas Immanent in Nervous Activity](01-Foundations/001-McCulloch-Pitts-1943/) (McCulloch & Pitts) | 1943 | The first artificial neuron: a network simulator, all of Figure 1 (including the heat/cold illusion), memory loops, and a compiler that turns logic formulas into networks (Theorem II). 21 tests. |
-| 002 | [The Perceptron: A Probabilistic Model for Information Storage and Organization in the Brain](01-Foundations/002-Rosenblatt-1958/) (Rosenblatt) | 1958 | The first learning neural network. The probability theory of randomly wired A-units (Eqs. 1–3, checked against simulation), the full photoperceptron with α/γ/bivalent learning, and Figures 4–7, 10, 11: memorizing vs generalizing, distributed memory, trial-and-error learning. 13 tests. |
-| 003 | [Perceptrons: An Introduction to Computational Geometry, Introduction](01-Foundations/003-Minsky-Papert-1969/) (Minsky & Papert) | 1969 | What a perceptron can't compute. The formal perceptron, the order-3 convexity perceptron, the seesaw, and machine-checked proofs that connectedness isn't local (Theorems 0.6.1 and 0.8). Extension: parity's order, by linear programming. 26 tests. |
-| 004 | [Learning Representations by Back-Propagating Errors](01-Foundations/004-Rumelhart-Hinton-Williams-1986/) (Rumelhart, Hinton & Williams) | 1986 | Backpropagation, Eqs. (1)–(9), on any layered net (checked against finite differences), plus backprop through time (Figure 5). Reproduces the mirror-symmetry net of Figure 1, with the same 1 : 2 : 4 weight structure, and the family-tree net of Figures 2–4, with its learned nationality/generation/branch features. Finds that the paper's family-tree recipe stalls from vanishing gradients. 14 tests. |
-| 005 | [Perceptron: Learning, Generalization, Model Selection, Fault Tolerance, and Role in the Deep Learning Era](01-Foundations/005-Du-et-al-2022/) (Du, Leung, Mow & Swamy) | 2022 | A survey of 70 years of perceptron research. Built from scratch in NumPy: the perceptron, pocket and LMS rules; an MLP with backpropagation; 11 training algorithms (momentum, RProp, Levenberg–Marquardt, BFGS, conjugate gradients); early stopping, weight decay and fault injection. Reproduces the paper's Iris experiment (Table 1, Figure 4). 40 tests. |
-| 006 | [Efficient BackProp](02-Training-Deep-Networks/006-LeCun-et-al-1998-Efficient-BackProp/) (LeCun, Bottou, Orr & Müller) | 1998 | Every trick (input normalization/whitening, 1.7159·tanh(2x/3), ±1 targets, fan-in init, SGD vs batch) tested on digits; Hessian tools (diagonal Hessian by backprop, Hessian-vector products, power method, on-line eigenvalue); stochastic diagonal Levenberg–Marquardt. Finds the paper's own learning-rate bound (2.38) is wrong: the bias makes it 2.0. 11 tests. |
-| 007 | [Understanding the difficulty of training deep feedforward neural networks](02-Training-Deep-Networks/007-Glorot-Bengio-2010-Difficulty-Training-Deep-FF/) (Glorot & Bengio) | 2010 | Standard vs normalized (Xavier) init, sigmoid/tanh/softsign, per-layer activation and gradient monitoring, Jacobian singular values (0.49 vs 0.80, matching the paper's 0.5/0.8), a Shapeset-3×2 generator, Table 1 experiment script. 9 tests. |
-| 008 | [On the importance of initialization and momentum in deep learning](02-Training-Deep-Networks/008-Sutskever-et-al-2013-Initialization-and-Momentum/) (Sutskever, Martens, Dahl & Hinton) | 2013 | Classical and Nesterov momentum by hand, Theorem 2.1 checked exactly, the momentum schedule, sparse and echo-state initialization, deep autoencoder and RNN addition-problem scripts. Finds NAG can diverge where CM converges when lr·λ > 1. 11 tests. |
-| 009 | [Improving neural networks by preventing co-adaptation of feature detectors](02-Training-Deep-Networks/009-Hinton-et-al-2012-Preventing-Co-adaptation/) (Hinton et al.) | 2012 | Dropout with explicit masks, max-norm, the mean network; proves (by enumerating all 1,024 sub-networks) that it is exactly their geometric mean; MNIST experiment script. 6 tests. |
-| 010 | [Dropout: A Simple Way to Prevent Neural Networks from Overfitting](02-Training-Deep-Networks/010-Srivastava-et-al-2014-Dropout/) (Srivastava et al.) | 2014 | ReLU dropout nets, Bernoulli and Gaussian dropout, max-norm and other regularizers, Monte-Carlo averaging, sparsity, dropout = ridge regression (Section 9.1) checked; scripts for Table 9 and Figures 7–11. 7 tests. |
-| 011 | [Adam: A Method for Stochastic Optimization](02-Training-Deep-Networks/011-Kingma-Ba-2015-Adam/) (Kingma & Ba) | 2015 | Adam, AdaMax, AdaGrad, RMSProp, AdaDelta, SGD Nesterov and temporal averaging from scratch; matches torch.optim.Adam; bias correction, step bound, scale invariance and AdaGrad-as-a-limit checked; scripts for Figures 1–4 (not run). 17 tests. |
-| 012 | [Batch Normalization](02-Training-Deep-Networks/012-Ioffe-Szegedy-2015-Batch-Normalization/) (Ioffe & Szegedy) | 2015 | BN forward and backward by hand (the paper's chain rule, checked against finite differences and PyTorch), Algorithm 2 inference statistics, conv BN, the Section 2 bias-drift example, scale invariance; a hand-written torch BN layer; scripts for Figure 1 and learning-rate/deep-sigmoid findings (not run). 13 tests. |
-| 013 | [Gradient-Based Learning Applied to Document Recognition (LeNet-5)](03-CNNs-and-Vision/013-LeCun-et-al-1998-LeNet5-Gradient-Based-Learning/) (LeCun et al.) | 1998 | LeNet-5 exactly as in the paper (C3 partial connections, trainable subsampling, 7x12-bitmap RBF outputs, exactly 60,000 parameters), convolution by hand, MSE vs MAP loss (collapse), distortions, stochastic diagonal Levenberg-Marquardt; scripts for Figures 5, 6, 9 (not run). 17 tests. |
-| 014 | [ImageNet Classification with Deep CNNs (AlexNet)](03-CNNs-and-Vision/014-Krizhevsky-et-al-2012-AlexNet/) (Krizhevsky, Sutskever & Hinton) | 2012 | AlexNet with the two-GPU split as grouped convs (60,965,224 parameters), LRN by hand, overlapping pooling, 2012-style dropout, the paper's update rule and init, crops/flips/10-crop/PCA colour augmentation; CIFAR-10 ablation scripts and a full ImageNet-folder script (not run). 13 tests. |
-| 015 | [Very Deep Convolutional Networks (VGG)](03-CNNs-and-Vision/015-Simonyan-Zisserman-2015-VGG/) (Simonyan & Zisserman) | 2015 | All six configs of Table 1 with exact Table 2 parameter counts (D = 138,357,544), 3x3 receptive fields measured, init from net A, FC-to-conv dense evaluation, scale jittering, multi-crop; init explosion/vanishing shown; CIFAR-10 scripts for depth, 3x3 vs 5x5, init, jittering (not run). 14 tests. |
-| 016 | [Deep Residual Learning (ResNet)](03-CNNs-and-Vision/016-He-et-al-2016-ResNet/) (He et al.) | 2016 | Basic and bottleneck blocks, shortcut options A/B/C, ResNet-18 to 152 (Table 1 FLOPs and parameters measured exactly) and CIFAR ResNet-20 to 1202 (Table 6 parameters exact); construction argument run for real; plain-net gradient explosion with BN measured; CIFAR scripts for Fig. 6/7 (not run). 14 tests. |
-| 017 | [Intriguing Properties of Neural Networks](04-Robustness-and-Generalization/017-Szegedy-et-al-2013-Intriguing-Properties/) (Szegedy et al.) | 2013 | Box-constrained L-BFGS adversarial attack with the search over c (finds the exact minimum on a linear boundary), the paper's distortion measure and baselines, units vs random directions, operator norms of FC and conv layers (Fourier formula checked against brute force); scripts for Tables 1-4, Figures 1-2, adversarial training (not run). 12 tests. |
-| 018 | [Understanding Deep Learning Requires Rethinking Generalization](04-Robustness-and-Generalization/018-Zhang-et-al-2017-Rethinking-Generalization/) (Zhang et al.) | 2017 | All randomization tests (label corruption, shuffled/random pixels, Gaussian images), the CIFAR-10 models with Table 1's exact parameter counts, Theorem 1's 2n+d-weight ReLU net fitting any labels, Rademacher fit, SGD = minimum-norm interpolant; scripts for Figure 1, Table 1, kernel fit (not run). 12 tests. |
-| 019 | [Distributed Representations of Words and Phrases (Word2Vec)](05-Words-and-Sequences/019-Mikolov-et-al-2013-Word2Vec-Negative-Sampling/) (Mikolov et al.) | 2013 | Skip-gram in NumPy with hand-written gradients for full softmax, hierarchical softmax (Huffman tree), negative sampling and NCE (all gradient-checked), subsampling, 3/4-power noise, phrase detection, analogies; text8 scripts for Table 1, phrases, vector addition, Figure 2 (not run). 15 tests. |
-| 020 | [Exploiting Similarities among Languages for MT](05-Words-and-Sequences/020-Mikolov-et-al-2013-Similarities-Among-Languages/) (Mikolov, Le & Sutskever) | 2013 | CBOW with hand-written (gradient-checked) negative sampling, the translation matrix (SGD and exact), P@1/P@5, confidence filtering, edit-distance and co-occurrence baselines, ED+TM; Europarl + MUSE scripts for Tables 2-3 and Figure 1 (not run). 9 tests. |
-| 021 | [Long Short-Term Memory](05-Words-and-Sequences/021-Hochreiter-Schmidhuber-1997-LSTM/) (Hochreiter & Schmidhuber) | 1997 | The original LSTM (no forget gate) in NumPy with the paper's truncated RTRL-style learning rule, shown equal to autograd with detached recurrence; CEC factor 1.0 and state storage verified; error-vanishing analysis; internal state drift and its gate-bias remedy measured; all task generators; scripts for Experiments 1, 2a, 4, 5, 6a (not run). 16 tests. |
-| 022 | [Generating Text with Recurrent Neural Networks](05-Words-and-Sequences/022-Sutskever-et-al-2011-Generating-Text-with-RNNs/) (Sutskever, Martens & Hinton) | 2011 | Standard, tensor and multiplicative RNNs (paper's 4.9M-parameter size and equal-size comparison checked), a compact Hessian-free optimizer (Gauss-Newton product verified against explicit J^T H J), sampling, bits/char, debagging; text8 scripts for RNN vs MRNN, HF vs Adam, samples, debagging (not run). 12 tests. |
-| 023 | [Training Recurrent Neural Networks (PhD thesis)](05-Words-and-Sequences/023-Sutskever-2013-PhD-Thesis-Training-RNNs/) (Sutskever) | 2013 | Ch. 3: the RTRBM with BPTT + CD learning (exact-gradient version matches autograd of the exact likelihood); Ch. 4: HF with structural damping (curvature product verified against explicit matrices), all 8 pathological problems, bouncing balls; scripts for Figure 4.1 and RTRBM videos (not run). 16 tests. |
-| 024 | [Recurrent Neural Network Regularization](05-Words-and-Sequences/024-Zaremba-et-al-2014-RNN-Regularization/) (Zaremba, Sutskever & Vinyals) | 2014 | Deep LSTM (cell checked against torch) with the paper's non-recurrent dropout vs naive and none, verified inside the network; Figure 3's L+1 count; stateful truncated BPTT on PTB with the paper's exact recipes (20M / 66M models), ensembles, samples (not run). 10 tests. |
-| 025 | [An Empirical Exploration of Recurrent Network Architectures](05-Words-and-Sequences/025-Jozefowicz-et-al-2015-Empirical-Exploration-RNN-Architectures/) (Jozefowicz, Zaremba & Sutskever) | 2015 | All 10 cells of Table 1 (LSTM variants, forget bias, GRU, MUT1-3), architectures as graphs (LSTM/GRU graphs equal the hand-written cells), the six mutations, Eq. 1 and the top-100 search; arithmetic/XML/memorization generators; scripts for Table 1, the forget bias, a search run (not run). 12 tests. |
-| 026 | [Learning Phrase Representations using RNN Encoder-Decoder](05-Words-and-Sequences/026-Cho-et-al-2014-RNN-Encoder-Decoder/) (Cho et al.) | 2014 | The GRU (Eqs. 5-8, gates verified) and the full encoder-decoder of Appendix A (maxout output, factored softmax, orthogonal init), pair scoring, generation, BLEU, the log-linear feature; Multi30k scripts for pair ranking, BLEU, phrase vectors (not run). 12 tests. |
-| 027 | [Sequence to Sequence Learning](05-Words-and-Sequences/027-Sutskever-et-al-2014-Seq2Seq/) (Sutskever, Vinyals & Le) | 2014 | Deep LSTM encoder-decoder (384M-parameter paper size, 8000-number sentence vector checked), source reversal and its time-lag argument, beam search with ensembles (exact on a constructed case), n-best rescoring, the training schedule; Multi30k scripts for Tables 1-2, Figures 2-3 (not run). 11 tests. |
-| 028 | [Neural Machine Translation by Jointly Learning to Align and Translate](05-Words-and-Sequences/028-Bahdanau-et-al-2015-Attention-NMT/) (Bahdanau, Cho & Bengio) | 2015 | RNNsearch exactly as in Appendix A (bidirectional GRU annotations, additive attention, maxout output, paper init with v_a = 0) and the RNNencdec baseline; toy demo: encdec 59% vs attention 100% at length 16 with a learned anti-diagonal alignment; Multi30k scripts for Table 1, Figures 2-3 (not run). 9 tests. |
-| 029 | [Show and Tell: A Neural Image Caption Generator](05-Words-and-Sequences/029-Vinyals-et-al-2015-Show-and-Tell/) (Vinyals, Toshev, Bengio & Erhan) | 2015 | NIC with the LSTM of Eqs. 4-8 as printed and the image fed once; sampling, beam search with N-best lists, ranking by p(S\|I), BLEU-n, human BLEU, CIDEr-D; toy image world: correct captions for unseen combinations, beam > greedy, 'beats humans' on BLEU; Flickr8k scripts for Tables 1-2, 4, 6 (not run). 12 tests. |
-| 030 | [Grammar as a Foreign Language](05-Words-and-Sequences/030-Vinyals-et-al-2015-Grammar-as-Foreign-Language/) (Vinyals, Kaiser, Koo, Petrov, Sutskever & Hinton) | 2015 | Tree linearization with XX tags, repair of malformed outputs, an EVALB re-implementation, LSTM+A (attention on the current decoder state, input feeding, dropout between layers), beam search with ensembles; toy grammar: F1 89.8 vs 80.5 without attention (82.7 vs 69.6 on long sentences), attention sweeps left to right but is blurrier than Figure 4; NLTK WSJ-sample scripts for Table 1, Figures 3-4 (not run). 13 tests. |
-| 031 | [Pointer Networks](05-Words-and-Sequences/031-Vinyals-et-al-2015-Pointer-Networks/) (Vinyals, Fortunato & Jaitly) | 2015 | Ptr-Net plus the seq2seq and attention baselines, beam search with the valid-tour constraint; exact / approximate solvers and metrics for convex hull, Delaunay and TSP (Held-Karp, greedy, 2-opt, Christofides); demo: one model sorts any length (58% of positions right at an unseen n = 15), hull n = 5 ties seq2seq as in the paper; scripts for Tables 1-2 (not run). 8 tests. |
-| 032 | [Order Matters: Sequence to Sequence for Sets](05-Words-and-Sequences/032-Vinyals-et-al-2015-Order-Matters/) (Vinyals, Bengio & Kudlur) | 2016 | Read-Process-Write (permutation-invariant attention encoder) with a pointer writer and glimpses, the Ptr-Net baseline, Eq. 9 order search (exact max, ancestral sampling, uniform pretraining), depth/breadth-first tree linearizations, star graphical models; demo: sorting P=0 65% < Ptr-Net 75% < P=1+glimpse 84%, head-first 0.26 nats better; scripts for Tables 1-2 and Section 5 (not run). 12 tests. |
-| 033 | [Neural Machine Translation in Linear Time (ByteNet)](05-Words-and-Sequences/033-Kalchbrenner-et-al-2016-ByteNet/) (Kalchbrenner et al.) | 2016 | Masked/centred dilated 1-D convolutions, layer-norm residual blocks (ReLU and multiplicative units), the ByteNet LM and translator with dynamic unfolding, gradient saliency; receptive field exactly 1 + sum (k-1)r (the paper's '315' does not match: 373); demo: dilation learns a lag of 10 that an undilated stack cannot, 100/100 toy translations, linear-time forward; scripts for enwik8, char-level MT, Figures 5-6 (not run). 9 tests. |
-| 034 | [Attention Is All You Need](06-Transformers/034-Vaswani-et-al-2017-Attention-Is-All-You-Need/) (Vaswani et al.) | 2017 | The Transformer from scratch: scaled dot-product and multi-head attention, sinusoidal positions (relative-offset rotation verified), post-LN encoder/decoder with tied embeddings, Noam schedule, label smoothing, beam search with length penalty, checkpoint averaging, BPE; base 63.1M / big 214.3M parameters (paper 65M / 213M); demo: 50/50 reversals with an anti-diagonal head, loss at the label-smoothing floor; Multi30k scripts for Tables 2-4 (not run). 11 tests. |
-| 035 | [Fast Transformer Decoding: One Write-Head is All You Need](06-Transformers/035-Shazeer-2019-Multi-Query-Attention/) (Shazeer) | 2019 | The paper's einsum multi-head / multi-query attention (batched and incremental), grouped-query attention, a decoder LM with a KV cache and local window, the memory/compute cost model; widened FFNs 5440 / 9088 reproduced exactly; demo: KV cache 8x smaller, CPU decoding 6.0 -> 2.2 ms/step (no cache: 47.5); PTB scripts for Tables 1-3 (not run). 9 tests. |
-| 036 | [Generating Long Sequences with Sparse Transformers](06-Transformers/036-Child-et-al-2019-Sparse-Transformers/) (Child, Gray, Radford & Sutskever) | 2019 | Strided and fixed factorized attention (two-hop validity checked; fixed works only block-then-summary), blocked kernels without the n x n matrix, pre-LN blocks with 1/sqrt(2N) init, GELU, attention embeddings, recomputation; demo: 11-32x fewer pairs, strided copies periodic rows like dense while fixed struggles; enwik8/CIFAR-10 scripts for Tables 2-4 (not run). 9 tests. |
-| 037 | [BERT](06-Transformers/037-Devlin-et-al-2019-BERT/) (Devlin, Chang, Lee & Toutanova) | 2019 | WordPiece, [CLS]/[SEP]/segment packing, 15% masking with 80/10/10, NSP pairs, the bidirectional encoder (and an LTR switch), tied MLM head, classification / SQuAD-span (with no-answer) / multiple-choice heads, feature extraction; base 110.1M / large 336.2M; demo: masked LM recovers right-determined tokens 100% vs left-to-right 9.5%; mini-BERT on Gutenberg + SST-2/RTE scripts for Tables 1, 5-7 (not run). 11 tests. |
-| 038 | [ViT](06-Transformers/038-Dosovitskiy-et-al-2021-ViT/) (Dosovitskiy et al.) | 2021 | patchify, [class] token + learnable 1-D positions, pre-LN encoder, MLP pre-training head and zero-init fine-tuning head, bicubic 2-D position interpolation for higher-resolution fine-tuning, a hybrid CNN stem, Figure 7 tools (filter PCA, position similarity, mean attention distance), masked patch prediction (3-bit mean colour, 80/10/10); B/16 86.6M / L/16 304.3M / H/14 632.0M; demo: CNN 100% vs ViT 40.8% on a tiny locality task (inductive bias), and honestly no grid structure or head specialisation yet after short training; CIFAR-10 scripts for Figures 3-5, 7 and Section 4.6 (not run). 8 tests. |
-| 039 | [VAE](07-Generative-Models/039-Kingma-Welling-2014-VAE/) (Kingma & Welling) | 2014 | ELBO with both SGVB estimators (A: all sampled, B: closed-form Gaussian KL), the reparameterization trick, Gaussian/Bernoulli MLP encoder and decoder, MAP weight decay, sampling and 2-D manifolds; baselines: wake-sleep, Monte Carlo EM with HMC; Appendix D marginal likelihood estimator; demo: Eq. 1 exact on a linear-Gaussian model, reparameterized gradients 8-12x lower variance than score-function, estimator B 4x less noisy, AEVB beats wake-sleep by ~11 nats on an MNIST slice, Nz = 20 no overfitting (but no latents fully switched off); scripts for Figures 2-5 (not run). 9 tests. |
-| 040 | [Inverse Autoregressive Flow](07-Generative-Models/040-Kingma-et-al-2016-Inverse-Autoregressive-Flow/) (Kingma et al.) | 2016 | MADE, gated / affine / location-only IAF steps with exact sequential inverse, Algorithm 1 posterior with order reversal, linear IAF (full covariance), planar flow, free bits, discretized logistic likelihood, a flow VAE; demo: diagonal q stuck at the exact -1/2 log(1-rho^2) gap while linear IAF reaches ~0, banana KL 0.89 (diagonal) -> 0.02 (IAF T=4), Figure 1 toy gap 0.75 -> 0.43 nats, inverse 100x slower than sampling; scripts for Tables 1-4, Figures 1 and 7 (not run). 9 tests. |
-| 041 | [Variational Lossy Autoencoder](07-Generative-Models/041-Chen-et-al-2017-Variational-Lossy-Autoencoder/) (Chen et al.) | 2017 | bits-back code lengths, windowed autoregressive decoders (1-D, exact AxB-window PixelCNN, 6-layer 3x3 stack, grayscale context), autoregressive-flow prior, VLAE; demo: information preference measured on a toy with one global bit (nats in z: factorized 2.42, window-1 0.57 ~ the global bit, full decoder 0.27 and falling), bits-back accounting 10.59 - 5.12 = 5.47 vs H = 5.40, AF prior bound = IAF posterior bound exactly; scripts for Tables 1-5 and Figures 1, 3 (not run). 9 tests. |
-| 042 | [GAN](07-Generative-Models/042-Goodfellow-et-al-2014-GAN/) (Goodfellow et al.) | 2014 | maxout/dropout discriminator, ReLU/sigmoid generator, Algorithm 1 with k steps, minimax and non-saturating generator losses, D* / V / JSD / C(G) helpers, Parzen-window evaluation with cross-validated sigma, nearest neighbours, interpolation; demo: C(G) = -log 4 + 2 JSD exactly, 1-D GAN reaches N(3, 0.5^2) but oscillates, saturating gradient ~4400x weaker, frozen-D 'Helvetica' collapse 7 -> 1 modes, Parzen score can't tell a too-narrow generator apart; scripts for Table 1 and Figures 2-3 (not run). 7 tests. |
-| 043 | [InfoGAN](07-Generative-Models/043-Chen-et-al-2016-InfoGAN/) (Chen et al.) | 2016 | latent codes (categorical + continuous) beside noise, the variational MI lower bound L_I with a Q head sharing D's body, Table 1 MNIST networks, InfoGAN step with a GAN-with-Q baseline, Hungarian cluster accuracy, exact discrete MI and Lemma 5.1; demo: L_I = I exactly at the true posterior, L_I -> ln 4 for InfoGAN vs ~0 for a GAN, unsupervised cluster accuracy 1.00 vs 0.26 and continuous code = position along each segment (|corr| 0.83); scripts for Figures 1-2, 5-6 (not run). 8 tests. |
-| 044 | [Wasserstein GAN](07-Generative-Models/044-Arjovsky-et-al-2017-Wasserstein-GAN/) (Arjovsky, Chintala & Bottou) | 2017 | TV / KL / JS / Earth-Mover distances (1-D samples, CDFs, primal and dual transport LPs), Example 1 closed forms, sigmoid-free critic, weight clipping with Lipschitz bounds, Algorithm 1 with RMSProp; demo: primal = dual LP exactly, JS stuck at log 2 with a 1000x-swinging gradient vs a linear W estimate with steady gradient, WGAN walks the parallel line from theta = 1 to 0, critic estimate tracks the big early drop in W (r = 0.89) but not fine differences later (r = -0.29); scripts for Figures 3-7 on CIFAR-10 (not run). 7 tests. |
-| 045 | [PixelCNN++](07-Generative-Models/045-Salimans-et-al-2017-PixelCNN-plus-plus/) (Salimans, Karpathy, Chen & Kingma) | 2017 | discretized logistic mixture likelihood with edge bins and a stable log, whole-pixel RGB coupling, sampling, two-stream down/down-right shifted convolutions, gated ResNet with dropout, U-net downsampling with long short-cuts, class conditioning, softmax and dequantized ablations; demo: mixture within 0.006 bits of MNIST's pixel entropy, softmax memorises (test 8.70 vs 7.15 bits), dequantized bound slightly worse (Jensen), exact causal field with no blind spot; one dev run: short-cuts 2.31 vs 2.76 bits/dim; scripts for Tables 1-2 and ablations (not run). 8 tests. |
-| 046 | [Glow](07-Generative-Models/046-Kingma-Dhariwal-2018-Glow/) (Kingma & Dhariwal) | 2018 | squeeze, actnorm with data-dependent init, invertible 1x1 convolution (plain and LU), reverse/shuffle baselines, additive and affine coupling with zero-init, learned split prior, multi-scale encode/decode, temperature sampling, dequantization and bits/dim; demo: per-layer log-dets = full-Jacobian log|det| (2.526668 vs 2.526669), exact inverse, LU log-det O(c), a small flow on moons-in-6-D, temperature narrows samples, latent arithmetic moves points between moons; scripts for Figure 3, Tables 2-3, Figures 5-6, 8 (not run). 7 tests. |
-| 047 | [DALL-E](07-Generative-Models/047-Ramesh-et-al-2021-DALL-E/) (Ramesh et al.) | 2021 | dVAE with gumbel-softmax, KL to a uniform prior, cosine schedules and the logit-Laplace likelihood; text+image transformer with learned per-position padding, row/column embeddings, row/column/conv sparse masks and the 1/8 + 7/8 loss; generation with image prefixes, reranking, PowerSGD with error feedback, fp16 per-resblock scaling; demo: beta = 0 collapses the codebook (perplexity ~1) vs 4.4-5.0 codes at beta = 6.6, zero-shot colour x position composition 45-57% and seed-dependent ('inconsistent', as the paper says), completion from one image row 100%, reranking 83 -> 100%, Table 1 compression rates exact; synthetic-world scripts for 7 ablations (not run). 9 tests. |
-| 048 | [GPT](08-Pretraining-and-Scaling-LLMs/048-Radford-et-al-2018-GPT/) (Radford et al.) | 2018 | decoder-only Transformer with learned positions and tied output (116.5M with the paper's settings), LM loss, <s>/$/<e> input transformations for classification / entailment / similarity / multiple choice, FineTuner with L3 = L2 + 0.5 L1, layer transfer, zero-shot heuristics, AdamW decay groups and schedules (BPE reused from 034); demo on synthetic reviews: zero-shot 'very good/bad' 89% with no labels (appearing abruptly), 40-label fine-tuning 80-82% pre-trained vs 73% scratch, aux LM no clear gain on tiny data, more transferred layers 50 -> 57 -> 75%; Gutenberg + GLUE/COPA scripts (not run). 8 tests. |
-| 049 | [GPT-2](08-Pretraining-and-Scaling-LLMs/049-Radford-et-al-2019-GPT-2/) (Radford et al.) | 2019 | byte-level BPE with GPT-2's category-splitting pre-tokenizer, pre-LN model with final LN and 1/sqrt(N) residual init, exact Table 2 sizes (124 / 355 / 774 / 1558M vs the paper's labels), top-k generation, per-unit perplexity, LAMBADA stop-word filter, cloze scoring, prompt formats, 8-gram Bloom-filter overlap; demo: BPE round-trips any Unicode, residual std after 48 layers 0.034 (scaled) vs 0.212, zero-shot Q/A on facts seen only as prose 100% in a toy web text, Bloom overlap 0% vs 21.5% for leaked text; scripts for Table 3-style transfer, LAMBADA, TL;DR, overlap, pre-LN vs post-LN (not run). 9 tests. |
-| 050 | [GPT-3](08-Pretraining-and-Scaling-LLMs/050-Brown-et-al-2020-GPT3/) (Brown et al.) | 2020 | Table 2.1 sizes (12Ld^2 + embeddings within 2%), 6ND compute (175B = ~3,640 PF-days), alternating dense / banded attention, Table 2.2 mixture and epochs, Pareto(9) quality filter, MinHash fuzzy dedup, 13-gram contamination, zero/one/few-shot prompts, 3 multiple-choice scoring rules, arithmetic and word-scramble generators; demo: in-context learning measured exactly on per-sequence Dirichlet distributions (loss 2.17 -> 1.52 nats with context, within 0.02 of Bayes-optimal, wider model closer), filter keep rates, MinHash 0.80 vs true 0.85; synthetic-web scripts for scaling, K-shot accuracy, contamination (not run). 10 tests. |
-| 051 | [Scaling Laws](08-Pretraining-and-Scaling-LLMs/051-Kaplan-et-al-2020-Scaling-Laws/) (Kaplan et al.) | 2020 | every fitted law (L(N), L(D), L(C_min), L(N,D), L(N,S), B_crit, S_min, C_min), overfitting penalty and D ~ 5e3 N^0.74, early-stop bound, 12nd^2 / 6ND counts, Eq. 1.8 allocation exponents, Table 5 recipe, a numerical compute-optimal frontier (bisection), power-law and Eq. 1.5 fitting, a power-law-spectrum toy; demo: frontier N_opt ~ C^0.66 within ~2x of Table 5 with loss exactly 1.10x converged (= 1 + a_N/a_S), a_C = 0.052 from the other exponents, toy exponents 0.60 / 0.56; real-model scripts for L(N), shape, L(N,D), frontier, critical batch (not run). 9 tests. |
-| 052 | [Chinchilla](08-Pretraining-and-Scaling-LLMs/052-Hoffmann-et-al-2022-Chinchilla/) (Hoffmann et al.) | 2022 | parametric loss E + A/N^a + B/D^b, closed-form and brute-force compute frontier, Table 3 (~20 tokens/param), Appendix F FLOP counting, Huber + L-BFGS fit (Approach 3), training-curve envelope (Approach 1), IsoFLOP parabolas (Approach 2), synthetic runs from a known law; demo: Chinchilla 1.937 vs Gopher 1.993 nats at equal compute, all three approaches recover the planted a = 0.452 (0.457 / 0.451 / exact fit), exponent rounding moves Gopher's optimum 40B -> 32B, Approach 3's tokens/param inconsistent with ~20 (as later replications found); real-model scripts (not run). 7 tests. |
-| 053 | [CLIP](08-Pretraining-and-Scaling-LLMs/053-Radford-et-al-2021-CLIP/) (Radford et al.) | 2021 | symmetric contrastive (InfoNCE) loss with learned logit scale (init 1/0.07, clip 100), linear projections + L2 norm, causal text Transformer with [EOS] feature, attention pooling, zero-shot classifier from prompts with embedding-space ensembling, linear probe, effective robustness (logit-linear trend), bag-of-words predictive baseline; demo: coloured-MNIST CLIP with no labels, 88.1% zero-shot digits (ensemble) vs 85.4% single prompt, 100% colours, 54.7% on never-captioned digit/colour pairs, contrastive 88.1% vs bag-of-words prediction 48.6% at equal steps, paper's robustness table; CIFAR caption scripts (not run). 8 tests. |
-| 054 | [Codex](08-Pretraining-and-Scaling-LLMs/054-Chen-et-al-2021-Codex/) (Chen et al.) | 2021 | unbiased pass@k (Figure 3 product form, exact binomial, biased naive form), subprocess execution harness with timeout, stop sequences, temperature + nucleus sampling, mean/sum log-prob ranking, whitespace-run tokens, BLEU, code-loss law, Table 1, the 13 Appendix C building blocks and synthetic problems, mini HumanEval; demo: naive estimator 0.568 vs true 0.651, an off-by-one program with BLEU 0.81 fails while a correct rewrite has BLEU 0.10, 243 executed candidate programs show best T rising with k (simulated preferences), mean log-prob 0.52 vs random 0.31 (simulated), 17% fewer tokens with whitespace runs; stdlib code-LM + Codex-S + HumanEval scripts (not run). 9 tests. |
-| 055 | [Whisper](08-Pretraining-and-Scaling-LLMs/055-Radford-et-al-2023-Whisper/) (Radford et al.) | 2022 | log-Mel front end (Slaney filters, STFT 400/160, clamp + scale), SNR noise mixing, encoder-decoder (conv stem stride 2, sinusoidal/learned positions, pre-LN, cross-attention, tied embeddings), Table 1 parameter counts, multitask token format (language / task / 20 ms timestamps / no-speech / previous-text masking), WER + text normaliser, decoding heuristics (gzip ratio 2.4, log-prob -1 fallback, silence rule), greedy + beam decoding; demo: tiny keypad-tone 'speech' model in the exact token format, clean-only model 0.4% WER clean but >250% under any noise vs diverse-noise model 5-21% from 20 to 0 dB and 36% at unseen -5 dB, normaliser 100% -> 0% WER, Figure 2 RER 55.2%; LibriSpeech + released-model scripts (not run). 9 tests. |
-| 056 | [LLaMA](08-Pretraining-and-Scaling-LLMs/056-Touvron-et-al-2023-LLaMA/) (Touvron et al.) | 2023 | RMSNorm, SwiGLU (2/3 4d rounded to 256), RoPE, memory-efficient causal attention (online softmax, future blocks skipped), untied LLaMA decoder, Table 2 parameter formula, training-time and carbon arithmetic, digit splitting + byte fallback, warm-up + cosine-to-10% schedule; demo: hidden sizes 11008/13824/17920/22016, Table 2 counts 6.74/13.02/32.53/65.29B, 20.8 days at ~48% utilisation, Table 15 carbon exact, RoPE scores depend only on offset, efficient attention exact to 6e-7, half-size model repays 1.21x training compute after 4.5e11 served tokens (Chinchilla law), tiny GPT-2 vs LLaMA race 2.80 vs 2.09 nats/byte (one seed, caveated); ablation / over-training / arithmetic scripts (not run). 9 tests. |
-| 057 | [GPT-4 Technical Report](08-Pretraining-and-Scaling-LLMs/057-OpenAI-2023-GPT-4-Technical-Report/) (OpenAI) | 2023 | the disclosed methods (no architecture/data/compute is given): L(C) = aC^b + c loss prediction, -E[log pass_rate] = alpha C^-k capability prediction with the solved-by-all filter and difficulty buckets, ECE + reliability tables, Appendix C 3x50-character substring contamination check, rubric-based reward model (keyword stand-in), Hindsight Neglect items, Tables 1-2; demo: real tiny-model loss prediction 2.475 vs actual 2.361 (4.8% after 3.3x extrapolation), simulated capability fit k 0.251 (true 0.25), ECE 0.014 vs 0.117, contamination catches re-formatted copies but misses paraphrases; pre-registered prediction / calibration / contamination scripts (not run). 7 tests. |
-| 058 | [GPT-4o System Card](08-Pretraining-and-Scaling-LLMs/058-OpenAI-2024-GPT-4o-System-Card/) (OpenAI) | 2024 | safety-evaluation methods: Preparedness rules (overall = max category, deploy <= medium), Apollo rating rule, safe-behaviour / not-unsafe / not-over-refuse metrics, cons@k vs pass@k, per-attempt rate, two-proportion z-test, synthetic voices + spectral speaker embedding + streaming voice-output check, the card's tables; demo: GPT-4o scorecard -> medium, voice check catches other voices at 0% false alarms but a look-alike voice needs a threshold flagging 72% of approved chunks (the precision/recall trade-off), drift into the user's voice blocked at 2.0 s, simulated TTS pipeline lowers not-unsafe 0.978 -> 0.952, 'not significant' flips with 10x data; LibriSpeech speaker verification / TTS->Whisper / disparate WER scripts (not run). 5 tests. |
-| 059 | [Chain-of-Thought](09-Reasoning-and-Agents/059-Wei-et-al-2022-Chain-of-Thought/) (Wei et al.) | 2022 | standard vs chain-of-thought prompt builders with the 8 GSM8K exemplars of Table 20, answer extraction, a multi-step toy (sum of k digits mod 10) in 4 formats incl. the paper's ablations (same-length dots, reasoning after the answer), chain checking, toy training on paper 056's LLaMA; demo: chain of thought 100% at 2/4/6 digits vs answer-only 92.5/14.0/11.5%, dots and after-answer ablations no better than answer-only (as in Figure 5), honest failure at 8 digits (no length generalisation); GSM8K open-model / emergence scripts (not run). 6 tests. |
-| 060 | [Zero-Shot Reasoners](09-Reasoning-and-Agents/060-Kojima-et-al-2022-Zero-Shot-Reasoners/) (Kojima et al.) | 2022 | two-stage zero-shot-CoT (reasoning extraction with 'Let's think step by step.', then a format-specific answer trigger), answer cleansing, self-consistency voting, all 16 Table 4 triggers, a toy 'pre-trained' model whose corpus uses trigger tokens (direct / reasoning / irrelevant / misleading); demo: same model, no exemplars: answer trigger 100/35/13% vs reasoning trigger 99/89/83% at 2/4/6 digits, irrelevant ~ baseline, misleading worse (Table 4's pattern), self-consistency lifts sampled paths 68.5 -> 76.7% but not past greedy 80% (honest); open-model GSM8K / MultiArith / last-letter / coin-flip scripts (not run). 5 tests. |
-| 061 | [Training Verifiers](09-Reasoning-and-Agents/061-Cobbe-et-al-2021-Training-Verifiers-Math/) (Cobbe et al.) | 2021 | GSM8K format (#### answers, <<calculator>> annotations and insertion), coverage test@N, verifier best-of-N with top-k voting, majority vote, a short-trained generator, batched sampling, a generator-initialised token-level verifier with joint LM loss (solution-level / verification-only options); demo on a search toy (find two digits summing to t): greedy 58.3%, coverage@16 93.7%, verifier on 100 problems 44.0% (worse, as the paper predicts for small data) vs on 2000 problems 75.0%, top-3 vote 80.7%; two failed toy designs documented (verification only helps when checking is easier than generating); ablation + real GSM8K scripts (not run). 4 tests. |
-| 062 | [ReAct](09-Reasoning-and-Agents/062-Yao-et-al-2023-ReAct/) (Yao et al.) | 2023 | Wikipedia-style environment (search: first 5 sentences or similar titles, lookup: Ctrl+F, finish), the Thought / Action / Observation loop for any generate function, Standard/CoT/Act ablations of one trajectory, ReAct->CoT-SC and CoT-SC->ReAct back-off, a toy encyclopedia with imitation-trained agents and the environment writing observations; demo: closed-book Standard/CoT 100% on memorised facts but 3% when facts change (stale 'hallucinations'), Act/ReAct 100% by reading pages, 0% when the tool is down, back-off recovers 95% (5 evidence-free guesses never trigger it); Act = ReAct in the toy (honest); live-Wikipedia HotpotQA + toy studies (not run). 4 tests. |
-| 063 | [WebGPT](09-Reasoning-and-Agents/063-Nakano-et-al-2021-WebGPT/) (Nakano et al.) | 2021 | the Table 1 text browser (search with TF-IDF + authority, links, find, quote-as-reference, scroll, back, end) with its state summary, reference formatting, Bradley-Terry / Elo reward model with soft ties, best-of-n, KL-penalised return, a toy web (reliable vs wrong pages), stochastic browsing policy, simulated labeler, REINFORCE with KL; demo: linear RM 70.3% held-out, best-of-n true quality peaks at n=16 (2.93, 80.5% preferred to BC) then falls while the RM score keeps rising (over-optimisation via length), RL without KL hacks the RM (true 0.69 -> -0.25), with KL 2.71 (honest: close to best-of-n, unlike the paper); real RM on webgpt_comparisons + toy sweeps (not run). 4 tests. |
-| 064 | [Generative Agents](09-Reasoning-and-Agents/064-Park-et-al-2023-Generative-Agents/) (Park et al.) | 2023 | memory stream with the paper's retrieval score (min-max scaled 0.995^hours recency + 1-10 importance + cosine relevance, recency refresh), reflection at summed importance > 150 with questions, cited insights and a reflection tree, day planning from retrieved memories, a 25-agent town with perception and memory-sharing conversations (LLM calls replaced by transparent stand-ins); demo: hand-worked retrieval example (min-max scaling makes slow decay strong), 5-seed town: news reaches ~9-12 of 25 agents and ~3.6 change plans to attend the party, removing IMPORTANCE stops all spreading; honest notes on stand-ins and tuning; LLM-backed + interview + sweep scripts (not run). 4 tests. |
-| 065 | [LLM Agents Survey](09-Reasoning-and-Agents/065-Wang-et-al-2023-LLM-Agents-Survey/) (Wang et al.) | 2023 | the survey's framework as composable modules: three profile methods, unified vs hybrid memory (read by recency + relevance + importance, de-duplicating writes, importance-aware eviction, reflection), a simulated LLM with known step / judge accuracy and call counting, five planning strategies (single path, self-consistency, tree search with self-evaluation, environment feedback, Reflexion) with closed forms; demo: 6 steps at p=0.8: single path 25.4% (closed form 26.2%) vs env. feedback 94.6% (95.3%) at 7.3 calls vs tree search 63.9% at 22 calls; at 20 steps open-loop plans fall to 12%; unified memory forgets after 10 events, hybrid keeps 100%; grid / eviction / real-LLM Game-of-24 scripts. 5 tests. |
-| 066 | [Summarize from Human Feedback](10-Alignment/066-Stiennon-et-al-2020-Summarize-from-Human-Feedback/) (Stiennon et al.) | 2020 | the full RLHF pipeline with real tiny networks: toy summarisation task with a known human utility and noisy references, SFT, simulated labeler comparisons, Bradley-Terry reward model (SFT body + scalar head, references normalised to 0), PPO with per-token KL to SFT, clipped ratios, GAE and a separate RM-initialised value network; demo: SFT 1.35 true quality (51% preferred to references) -> PPO beta=0.2 2.02 (74%), PPO without KL gets the highest RM score but lower true quality by repeating the main topic (reward over-optimisation); beta sweep / RM scaling / best-of-n / ROUGE-reward / real-RM scripts (not run). 4 tests. |
-| 067 | [InstructGPT](10-Alignment/067-Ouyang-et-al-2022-InstructGPT/) (Ouyang et al.) | 2022 | toy InstructGPT with real tiny networks: pre-training on 'web text' where instructions are never answered, SFT on demonstrations, K-way rankings (K = 4-9) with the paper's per-prompt loss (all C(K,2) pairs in one batch element, K forward passes), RM normalised to demonstrations, PPO and PPO-ptx (+gamma x pre-training log-likelihood), alignment-tax benchmark; demo: base model 99.9% on its benchmark but ~0 instruction utility, SFT 2.13 utility but benchmark 89.3% (alignment tax), PPO-ptx keeps utility and recovers the benchmark to 98.3%; honest negative: PPO does not beat SFT because the 66%-accurate RM is weaker than the policy; RM-strength / batching / gamma / beta / data sweeps (not run). 3 tests. |
-| 068 | [Constitutional AI](10-Alignment/068-Bai-et-al-2022-Constitutional-AI/) (Bai et al.) | 2022 | constitution of critique/revision principles and multiple-choice feedback principles with the paper's prompt layouts; soft labels from normalised (A)/(B) log-probs, CoT labels clamped to 40-60%, principle ensembling; simulated LMs in a text world (comply / evasive / explain / lecture / helpful); Bradley-Terry PM with soft targets + KL-regularised RL; demo: harm falls 100% -> 0.8% over 4 revisions (10.0% without critiques), crowd labels that reward evasion give a 99.6%-evasive policy (utility 1.25) while constitution-guided AI feedback gives a non-evasive explaining policy (utility 1.74), a single 'polite' principle makes it lecture half the time; honest note: unclamped CoT labels were not 'more extreme' here; real critique/revision and real AI-label experiments (not run). 4 tests. |
-| 069 | [DPO](10-Alignment/069-Rafailov-et-al-2023-DPO/) (Rafailov et al.) | 2023 | the DPO loss (paper's Appendix B code) with its sigma(r_l - r_w) gradient weight and implicit reward beta log pi/pi_ref; exact bandit where DPO on infinite Bradley-Terry data equals pi_ref exp(r/beta)/Z to 1e-16; controlled-sentiment task with a real tiny GRU LM and an EXACT optimal reward-KL frontier; DPO vs RLHF (BT reward model + KL-penalised policy gradient), Preferred-FT, Unlikelihood, Best-of-N; demo: DPO reaches 87-98% of the best reward at its KL, Unlikelihood drifts to KL 6.7 for 55%, DPO's implicit reward ranks held-out pairs 76.6% vs 77.2% for an explicit RM; honest negative: RLHF is closer to the frontier (99-100%) here, so 'DPO dominates PPO' is not reproduced; frontier / data / noise / ablation sweeps and a real DPO fine-tune on Anthropic HH (not run). 3 tests. |
-| 070 | [Dense Passage Retrieval](11-Retrieval-RAG/070-Karpukhin-et-al-2020-Dense-Passage-Retrieval/) (Karpukhin et al.) | 2020 | toy Wikipedia (500 people x 4 facts + filler) with overlap (SQuAD-like) and paraphrase (NQ-like) questions; Okapi BM25 (k1 0.9, b 0.4); dual encoder with two independent (same-init) encoders, in-batch negatives + shared BM25 hard negatives, exact MIPS index, BM25 + lambda DPR hybrid, rule-based reader; demo: paraphrase top-1 DPR 81.7% vs BM25 19.0%, but on never-seen names BM25 83.0% vs DPR 48.5% (the 'salient phrase' weakness), hybrid >= 98% everywhere; Table 3 / sample-efficiency analogues with honest differences (BM25-only negatives fail, batch 32 > 128 at fixed epochs); equal-step ablations, similarity functions and a real BERT DPR on Natural Questions (not run). 3 tests. |
-| 071 | [RAG](11-Retrieval-RAG/071-Lewis-et-al-2020-RAG/) (Lewis et al.) | 2020 | re-uses 070's toy Wikipedia + DPR; tiny generator; RAG-Sequence and RAG-Token marginalisation over top-k documents with gradients into the question encoder only (frozen document index), BM25-as-logits and closed-book baselines, thorough / fast RAG-Sequence decoding, index hot-swapping, document posteriors per token; demo: paraphrase EM closed-book 9.0%, frozen DPR 11.5%, BM25 22.9%, learned retriever 57.5% (gold-in-top-5 9.8% -> 75.8% with no document labels), hot-swap 93.8% / 88.8% matched vs 0.6% / 3.9% mismatched, two-fact answers RAG-Token 73% vs RAG-Sequence 10%; honest notes: needs generator warm-up, more docs at test time hurt our tiny generator, a trained generator memorised the two-fact task; sweeps and real HF RAG on NQ (not run). 3 tests. |
-| 072 | [Atlas](11-Retrieval-RAG/072-Izacard-et-al-2022-Atlas/) (Izacard et al.) | 2022 | toy corpus with every fact written twice; unsupervised retriever (idf-weighted pooling; Contriever-style crop training included but it hurt); one-head Fusion-in-Decoder reader; the four retriever losses ADist / EMDR2 / PDist / LOOP; joint masked-LM pre-training with re-indexing; query-side few-shot fine-tuning; index swap; product quantisation; demo: 64-shot EM 48.5-53.8% with joint pre-training vs 7.2% without and 19.0% closed-book, EMDR2 lifts a weak retriever 48% -> 73% recall (PDist did not), index swap 56.3% / 32.7% matched but 27% stale answers, PQ 16x at ~no recall loss; honest notes on ADist and crop training; loss / fine-tuning / shots / k / PQ sweeps and a real Contriever + FLAN-T5 FiD (not run). 3 tests. |
-| 073 | [LoRA](12-Efficient-Finetuning-and-Quantization/073-Hu-et-al-2022-LoRA/) (Hu et al.) | 2022 | LoRALinear (B = 0, A Gaussian, alpha/r scaling, merge / unmerge, on / off) injected into 056's tiny LLaMA; GPT-3 parameter arithmetic (r = 4 on Wq, Wv = 18.9M); pre-train on copy / reverse / sort, adapt the SORT prompt to sort descending; demo: LoRA r = 8 (4,096 params) 97.4% vs full fine-tuning 99.8% (133k params), r = 1 only 47%, same-budget all-four-matrices r = 2 best (97.0%), adapter off restores the base skill that full fine-tuning destroyed, subspace similarity above chance (phi(1,8) = 0.49), Delta W amplifies under-emphasised directions of W (~12x); rank / budget / seed / data / alpha sweeps and real GPT-2 LoRA on SST-2 (not run). 3 tests. |
-| 074 | [SmoothQuant](12-Efficient-Finetuning-and-Quantization/074-Xiao-et-al-2023-SmoothQuant/) (Xiao et al.) | 2023 | symmetric INT-N fake quantization at per-tensor / per-token / per-channel / static granularity, LLM.int8()-style decomposition, calibration, smoothing s = max|X|^a / max|W|^(1-a) folded into RMSNorm gains; 073's tiny LLaMA given LLM-like fixed-channel outliers (~259x); demo: W8A8 per-tensor collapses to 5.9-8.2%, per-token 80.0%, per-channel 97.0%, SmoothQuant a=0.5 per-tensor static 98.9% (FP 98.9%), smoothing exact (1e-5) and shrinks the activation range 396 -> 2.9, alpha sweep U-shaped at W6A6 (92.9 / 97.0 / 92.4%); granularity / alpha / calibration / placement sweeps and real OPT-1.3B W8A8 perplexity (not run). 3 tests. |
-| 075 | [GPTQ](12-Efficient-Finetuning-and-Quantization/075-Frantar-et-al-2023-GPTQ/) (Frantar et al.) | 2023 | min-max grid and RTN (with groups), damped Hessian 2XX^T, greedy OBQ (Eqs. 2-3), literal fixed-order update, Algorithm 1 (Cholesky + lazy blocks + grouping) shown to be EXACTLY equal to the literal update, sequential whole-model quantization of 073's tiny LLaMA; demo: hand-worked two-weight compensation (layer error 0.640 -> 0.051), GPTQ ~0.5x RTN error and close to greedy OBQ at ~150x the speed, 2-bit model RTN 75.5% vs GPTQ 97.7% (FP 98.6%), groups help RTN most; layer / dampening / calibration / width / runtime sweeps and real GPTQ on OPT-125M/350M (not run). 3 tests. |
-| 076 | [AWQ](12-Efficient-Finetuning-and-Quantization/076-Lin-et-al-2023-AWQ/) (Lin et al.) | 2023 | weight-only group quantization of 074's outlier tiny LLaMA: keep-p%-in-FP by activation / weight / random (Table 1), fixed salient scale s with changed-Delta counting (Table 2), the AWQ search s = s_X^alpha folded into RMSNorm gains and the output rows of Wv / W3, weight clipping, GPTQ comparison; demo: keeping the 3 activation-salient channels rescues INT4 26.7% -> 99.1% (by weight norm: 26.4%), AWQ 98.2% / +clip 98.6% at INT4-g16 and 95.5% at INT3 vs RTN 50.6%; honest notes: best fixed s is 8 not 2 here, GPTQ does poorly on this outlier model; calibration-robustness / AWQ+GPTQ / act-order / real OPT-1.3B experiments (not run). 3 tests. |
-| 077 | [QLoRA](12-Efficient-Finetuning-and-Quantization/077-Dettmers-et-al-2023-QLoRA/) (Dettmers et al.) | 2023 | NF4 built from normal quantiles (matches Appendix E to 6e-8), Int / FP4 (E2M1, E3M0) / NF k-bit types, block-wise absmax quantization, double quantization (0.5 -> 0.127 bits/param), frozen 4-bit base + LoRA on all linear layers (073's LoRA), 65B memory budget; demo: NF4 lowest error and highest code entropy on Gaussian weights, QLoRA NF4+DQ 99.3% = 16-bit LoRA 99.7% = full fine-tuning 99.2% while LoRA on q,v only gets 94.9%, 65B: ~786 GB full vs ~43 GB QLoRA; honest notes: FP4 variants rank differently on pure Gaussians, adapters recover even an FP4 base on this tiny model; data-type / placement / recovery sweeps and real bitsandbytes + peft QLoRA (not run). 3 tests. |
-| 078 | [LLM-QAT](12-Efficient-Finetuning-and-Quantization/078-Liu-et-al-2023-LLM-QAT/) (Liu et al.) | 2023 | a tiny LLaMA that models whole sequences (so it can generate its own data), symmetric MinMax fake quantization with the straight-through estimator, per-channel weights / per-token activations / per-token KV cache (W-A-KV), top-1 / sampled / hybrid data-free generation, QAT with logits or hard-label distillation vs RTN PTQ; demo: PTQ 3-8-3 57.5% and 2-8-8 2.5%, data-free QAT on sampled generations 96.5% / 96.7% (real data 97.3%), top-1 data useless; honest notes: hybrid sampling fails in this toy (the first token picks the task), soft vs hard labels tie; W-A-KV / data / loss / clipping / data-size sweeps and data-free QAT of OPT-125M (not run). 3 tests. |
-| 079 | [FlashAttention](13-Systems-Inference-and-Training/079-Dao-et-al-2022-FlashAttention/) (Dao et al.) | 2022 | an HBM-traffic counter, standard attention (Alg. 0), online softmax, FlashAttention forward (Alg. 1, block sizes from M and d), recomputing backward (Alg. 4), block-sparse masks; demo: forward and backward exact to 3e-7, traffic 9.1x lower at N = 1024 with M = 32k (but 0.7x with a tiny SRAM), scaling ~N^2 and ~1/M as in Theorem 2, 32 GiB vs 16.5 MiB at N = 65k, block-sparse traffic proportional to kept blocks; honest CPU timing note (Python tiling slower than one matmul); IO-exponent fits, block-size and sparsity sweeps, real GPU SDPA benchmark (not run). 3 tests. |
-| 080 | [Efficiently Scaling Transformer Inference](13-Systems-Inference-and-Training/080-Pope-et-al-2022-Efficiently-Scaling-Transformer-Inference/) (Pope et al.) | 2022 | PaLM / TPU v4 cost model (compute, weight + KV memory, communication per layout, MFU), per-chip KV-cache model, and a virtual-chip simulation of the feed-forward layer in 1D / 2D weight-stationary and weight-gathered layouts with counted collectives; demo: Table 1 max contexts reproduced (1,333 / 666 / 42,654 vs 1,320 / 660 / 43,000), multihead KV 3.0 TB at batch 512, 1D comm stays ~2 BLE while 2D falls ~1/sqrt(chips) (0.46 BLE at 256 chips), weight-gathered wins only at 65k tokens/batch, roofline reproduces prefill-compute / decode-memory regimes but is 1.2-3x optimistic vs Table 2; context / layout / Pareto sweeps and real prefill-vs-decode timing (not run). 3 tests. |
-| 081 | [Parallelized SGD](13-Systems-Inference-and-Training/081-Zinkevich-et-al-2010-Parallelized-SGD/) (Zinkevich et al.) | 2010 | SimuParallelSGD with k machines vectorised in numpy (random shards, fixed eta, no communication, one final average) on sparse hashed-feature data like the paper's e-mail set, Huber / squared / logistic losses, contraction check (Lemma 3), stationary-distribution sampler (Theorems 9-10); demo: coupled chains shrink by 0.99890 <= 1 - eta*lambda per step, stationary spread ~eta and averaging 10 chains divides it ~10x, 10 machines x 2000 examples reach 0.85 of one full pass's objective, 1 -> 10 machines helps far more than 10 -> 100, lambda = 1e-6 gains more; honest notes: smaller eta needs longer T, our parallel run needs less total work than the paper's; grid / theory / alternative-scheme sweeps and real RCV1 (not run). PDF added from the NeurIPS 2010 proceedings. 3 tests. |
-| 082 | [TensorFlow whitepaper](13-Systems-Inference-and-Training/082-Abadi-et-al-2015-TensorFlow-Whitepaper/) (Abadi et al.) | 2015 | a miniature TensorFlow: dataflow graph with variables and control edges, registered gradient functions and symbolic tf.gradients by graph extension, Session.run with partial execution (feeds / fetches, ready-queue executor), common subexpression elimination, greedy simulated-execution placement with a cost model, Send/Recv partitioning (one Recv per tensor per device), 32->16-bit lossy transfers, Switch/Merge control flow; demo: gradients exact to 3e-11, MLP trained by update nodes (cost 0.78 -> 0.045), partial execution runs 4-10 of 36 nodes, CSE merges 6 duplicates, placement 4.6 ms vs 15.7 ms all-CPU with identical partitioned result, 16-bit error < 2^-7; placement / Recv / compression sweeps and a real-TensorFlow cross-check (not run). 3 tests. |
-| 083 | [TensorFlow (OSDI)](13-Systems-Inference-and-Training/083-Abadi-et-al-2016-TensorFlow-OSDI/) (Abadi et al.) | 2016 | built on 082's mini-TensorFlow: a sharded sparse embedding from Part / Gather / Stitch ops with sparse ScatterSub updates on PS shards, sampled softmax, Save/Restore checkpoint-interval simulation, and an event-driven simulator of asynchronous vs synchronous vs backup-worker replication; demo: sharded lookup equals the dense one while reading 32 of 100k rows, sampled softmax touches ~31x fewer rows, best checkpoint interval in between, backup workers reproduce Figure 8's shape (fastest at 4, best normalised at 3: +7.7%, with a tuned straggler model), async ahead of sync on an easy convex problem while backups close the gap; backup / percentile / staleness / sampled-softmax sweeps and real tf.distribute (not run). 3 tests. |
-| 084 | [GPipe](13-Systems-Inference-and-Training/084-Huang-et-al-2019-GPipe/) (Huang et al.) | 2019 | an event simulator of the GPipe fill-drain schedule, bubble formula, balanced partitioner and normalised throughput, plus a REAL micro-batched pipeline in PyTorch (K stages run in GPipe order) with optional re-materialisation; demo: ASCII schedule with idle fraction exactly (K-1)/(M+K-1), pipeline loss and gradients identical to full-batch back-prop (1e-8), re-materialisation keeps 7x fewer activations, uniform layers reach 6.56x at K = 8, M = 32 (paper 6.3) while heavy-tailed layers cap at 3.89 (paper AmoebaNet 3.48); honest notes on the M = 1 rows and per-cell differences; grid / optimal-partition / batch-norm / checkpoint-memory experiments (not run). 3 tests. |
-| 085 | [PipeDream](13-Systems-Inference-and-Training/085-Narayanan-et-al-2019-PipeDream/) (Narayanan et al.) | 2019 | the dynamic-programming partitioner over layer cuts AND stage replication (A(j, m) recurrence, config strings, NOAM), 1F1B vs flushing schedule simulators, and a real pipelined MLP trained with naive / weight-stashing / vertical-sync weight versions via hand-written backprop; demo: the DP rediscovers the paper's '7-1' VGG-16 layout on a slow network (3.65x over data parallel) and picks pure data parallelism on a fast one, 1F1B 57 vs 84 time units with in-flight minibatches [4, 3, 2, 1]; honest notes: naive pipelining did NOT fail on this small MLP (at 8 stages it even beat stashing) and vertical sync diverged; partitioner / schedule / semantics sweeps and PyTorch Schedule1F1B check (not run). 3 tests. |
-| 086 | [ZeRO](13-Systems-Inference-and-Training/086-Rajbhandari-et-al-2020-ZeRO/) (Rajbhandari et al.) | 2020 | per-GPU memory formulas for plain DP and ZeRO's P_os / P_os+g / P_os+g+p, max model sizes, and a simulated N_d-rank mixed-precision Adam job (fp16 params/grads, fp32 master + moments) with counted reduce-scatter / all-gather collectives in all four modes; demo: Figure 1 reproduced exactly (120 / 31.4 / 16.6 / 1.9 GB), Table 1's 1T column (15.6 GB at N_d = 1024), DP capped at 2B params on 32 GB vs 128B with P_os+g+p at N_d = 64, all four modes give BIT-IDENTICAL weights with bytes/param 16 / 4.76 / 2.88 / 1.01 at N_d = 16 and exactly 1.5x communication for P_os+g+p, ZeRO-R P_a 33 -> ~2 GB; memory / scaling / step-time sweeps and an FSDP recipe (not run). 3 tests. |
-| 087 | [High-Interest Credit Card of Technical Debt](14-Production-ML/087-Sculley-et-al-2014-High-Interest-Credit-Card-Technical-Debt/) (Sculley et al.) | 2014 | each warning of the paper turned into a small logistic-regression experiment: CACE (feature removal / addition / L2 change / missing values), old + new product numbers with leave-one-group-out ablation, a weekly CTR simulator with an x_week hidden feedback loop and prediction-bias monitoring, a correction cascade, fixed vs held-out-learned thresholds, and correlations that stop correlating; demo: removing x0 shifts another weight by 0.71, the legacy-number cleanup makes the two-scheme model worse than a new-only model (0.527 vs 0.497 log-loss) while ablation still rates the old numbers as slightly useful (honest note), prediction bias spikes to -0.17 the week the recommender improves, improving a raises A' log-loss 0.470 -> 0.529, a fixed threshold drops precision 0.906 -> 0.775 (re-learned 0.907), decoupled proxy drops accuracy 0.777 -> 0.692; seed / strength sweeps (not run). 4 tests. |
-| 088 | [Hidden Technical Debt in ML Systems](14-Production-ML/088-Sculley-et-al-2015-Hidden-Technical-Debt/) (Sculley et al.) | 2015 | the parts new since 087: a direct-feedback-loop simulator (greedy vs epsilon-greedy vs UCB vs an isolated random slice), a hidden loop between two disjoint systems (product picker / review picker), a config system following the paper's six principles (inheritance, diffs, automatic assertions for every example in the paper, transitive closure of data dependencies, unused-setting detection), typed Probability / LogOdds values, sliced prediction bias + schema data tests + action limits, reproducibility probes, and a tiny end-to-end pipeline whose ML share is measured; demo: greedy stuck in 75% of seeds vs UCB 5% (honest note: tiny CTR cost), B's learned weight 0.93 -> 0.27 as A improves, every config example caught, 10.1% of decisions silently flip on a log-odds/probability mix-up, a broken country shows -0.025 / +0.081 slice bias while overall stays -0.005 / +0.022, ML is 19% of our own pipeline; policy / monitoring / reproducibility sweeps (not run). 5 tests. |
-| 089 | [ML Test Score](14-Production-ML/089-Breck-et-al-2017-ML-Test-Score/) (Breck et al.) | 2017 | the 28-test rubric with its scoring rule (0 / 0.5 manual / 1 automated, sum per section, final = minimum, Table V), a toy production ML system (4 countries, drifting world, separate training / serving feature code, model registry, versioned server) and automated implementations of 26 tests (schema, leave-one-feature-out, feature cost, policy, deletion propagation, degraded-model offline/online correlation, staleness curve, slice release tests, inclusion, reproducibility, one-step unit tests, bless/veto, explain, canary with op versions and traffic ramp, rollback, skew, NaN monitor, slow-leak alarms, calibration); demo: the clean system scores 6.5 while its own tests expose a useless feature and a bad NG slice (honest note: the rubric scores having tests, not passing them), and each of 11 injected production bugs is caught by at least one test, with skew vs upstream changes told apart; detection / false-alarm / threshold / staleness sweeps (not run). 5 tests. |
-| 090 | [Rules of Machine Learning](14-Production-ML/090-Zinkevich-Rules-of-ML/) (Zinkevich) | web guide | all 43 rule titles, a weighted logistic-regression learner, and an experiment for each rule that makes a measurable claim: heuristic vs ML (R1), silent coverage drop 90% -> 60% (R10), feature weights vs data size (R21), position-weighted model delta (R24), importance weighting 10/3 (R30), temporal vs random validation (R33), 1% unfiltered holdout for a spam filter (R34), positional features (R36), the three-part training/serving skew decomposition with logged serving features (R29/31/37), monotone stacking (R40); demo: heuristic gets 44% of the ML gain (guide: ~50%), 330 crossed features lose at 300 examples and win from 3,000, unweighted sampling doubles predictions (0.353 vs 0.176) while 10/3 restores 0.176, random split estimates 0.544 vs actual 0.594, filtered-traffic labels give 0.135 vs true 0.344 spam rate while 1,955 held-out labels match the oracle, position feature lifts relevance recovery 0.77 -> 0.95, live skew 0.631 vs next-day 0.516 removed by logging (0.575); seed sweeps (not run). 5 tests. |
-| 091 | [Failing Loudly](14-Production-ML/091-Rabanser-et-al-2019-Failing-Loudly/) (Rabanser et al.) | 2019 | the full shift-detection pipeline on 8x8 digits: 8 dimensionality reductions (NoRed, PCA, sparse random projection per eq. 1, untrained / trained autoencoders, BBSD soft / hard, domain classifier), 4 tests (KS + Bonferroni, unbiased MMD with permutation test, chi-squared, binomial), the paper's shifts (Gaussian noise, rotation / translation / zoom, knock-out, FGSM, combinations), most-anomalous samples and the malignancy check; demo: false-positive rate 0.024, BBSDs best univariate at 10 samples, univariate ~ MMD, domain classifier weak early (0.10) but strong at 200 (0.80), oz+m_img caught with 10 samples while knock-out and small noise go undetected (and are harmless), m_img flagged malignant (top-20 accuracy 0.30 vs 0.97); honest difference: raw pixels win at n = 200 on 64-dim digits; full grid / latent size / malignancy / MNIST experiments (not run). 4 tests. |
-| 092 | [Data Distribution Shifts and Monitoring](14-Production-ML/092-Huyen-Data-Distribution-Shifts-and-Monitoring/) (Huyen) | 2022 blog | covariate / label / concept shift on a disease-prediction toy with input, prediction and accuracy monitors, importance weighting from a domain classifier, label-shift prior estimation via the confusion matrix, cumulative vs sliding windows and seasonal alert policies on an hourly stream, retraining strategies after concept drift, and a degenerate feedback loop with randomised exposure; demo: concept drift is invisible to input / prediction KS (p = 0.22 / 0.59) while accuracy drops 0.764 -> 0.668, label shift RAISES accuracy while doubling predicted disease rate, weighting cuts target log-loss 0.713 -> 0.567, prior estimate 0.167 vs true 0.143 (naive 0.301), same-hours-last-week comparison removes daily-cycle false alarms (11 -> 0), fine-tuning on recent data beats retraining on all data (0.55 vs 0.67-0.76), 10% exploration lifts catalogue coverage 0.5% -> 22.5%; robustness sweeps (not run). 4 tests. |
-| 093 | [Model Cards](14-Production-ML/093-Mitchell-et-al-2019-Model-Cards/) (Mitchell et al.) | 2019 | a ModelCard dataclass with the 9 sections of Figure 1 rendered to Markdown, confusion-matrix rates (FPR / FNR / FDR / FOR) disaggregated by unitary and intersectional groups with vectorised bootstrap 95% CIs, fairness gaps (equality of opportunity, equalized odds), a threshold slider, and the paper's two examples on synthetic stand-ins; demo: the smiling card reproduces both findings -- older men have the highest FDR (0.276 [0.242, 0.308] vs 0.120 for young women) and men a higher FNR (0.243 vs 0.122) -- while the aggregate row hides them, intersectional FNR gap 0.255 vs 0.122 by gender; the toxicity scorer's innocent mentions of targeted identity terms score 0.45 vs 0.05 (BPSN AUC 0.64 vs 1.00) while subgroup AUC is 1.00 everywhere, and balancing the training data lifts BPSN to 0.88-0.97; CI-width / seed / mitigation experiments (not run). 4 tests. |
-| 094 | [Designing Machine Learning Systems](14-Production-ML/094-Huyen-2022-Designing-ML-Systems/) (Huyen) | 2022 book | built from the book's public table of contents (the book is paid; no quotations): reservoir and stratified sampling, weak supervision with labelling functions, class imbalance (ROC-AUC vs PR-AUC, class weights), active learning, data leakage (feature selection before splitting, duplicates), hashing collisions, calibration (ECE, Platt scaling), baselines and invariance / directional behavioural tests, batch vs online prediction, A/B sample size, team-draft interleaving, Thompson-sampling bandits, stateless vs stateful retraining; demo: weak labels beat 100 hand labels (0.857 vs 0.747), PR-AUC 0.155 vs ROC-AUC 0.863 at 1.4% positives, leaky feature selection scores 0.84 on pure-noise labels (honest 0.43), Platt cuts ECE 0.204 -> 0.010 with AUC unchanged, invariance test catches a biased loan model (15.9% of decisions flip), online beats nightly batch 0.789 vs 0.729, 14,751 users per arm for 10% -> 11%, Thompson regret 81 vs 167, stateful training 67x cheaper at equal log-loss; sweeps (not run). 5 tests. |
-| 095 | [Evolution Strategies](15-Reinforcement-Learning-optional/095-Salimans-et-al-2017-Evolution-Strategies/) (Salimans et al.) | 2017 | the ES estimator with mirrored sampling, rank fitness shaping, weight decay and Adam; Algorithm 2 simulated with shared seeds (workers exchange only scalars); a batched numpy CartPole; REINFORCE for comparison; the section 3.1 variance-vs-horizon argument and the section 3.2 duplicated-features argument measured; demo: unbiased estimator with mirrored-pair variance independent of sigma (but worse at small sigma, honest), 16 workers stay bit-identical while sending 100x fewer floats, ES and REINFORCE both reach 500 on CartPole (ES 1.6x the env steps), REINFORCE variance grows 5.6 -> 367 from T = 10 to 1,000 while ES stays ~10, duplicated features match the original with lr/2 (and sigma cancels on a quadratic; our derivation says sigma/sqrt 2, the paper says sigma/2); data-efficiency / frame-skip / ablation / scaling sweeps (not run). 4 tests. |
-| 096 | [OpenAI Five (Dota 2)](15-Reinforcement-Learning-optional/096-Berner-et-al-2019-Dota2-OpenAI-Five/) (Berner et al.) | 2019 | surgery (Net2Net-style function-preserving widening and new observations, plus the small-random recurrent variant), PPO + GAE with manual gradients on the vectorised CartPole from 095, the paper's data-quality ablations (batch size, staleness via a queue of old parameter versions, sample reuse as consumption / production), surgery vs restart on an environment that gains observations, and team spirit; demo: widening / new inputs change the policy by exactly 0.0, surgery keeps skill across environment changes (first returns 260 / 500) while restarts begin at ~20, 4x batch gives a sublinear 1.27x speedup, staleness 8 slows learning 2.3x, reuse 8 slows it 1.5x (milder than the paper, honest), tau = 1 halves the gradient signal-to-noise vs tau = 0; batch / staleness / reuse / surgery / tau sweeps (not run). 4 tests. |
-| 097 | [AlphaGo](15-Reinforcement-Learning-optional/097-Silver-et-al-2016-AlphaGo/) (Silver et al.) | 2016 | the full AlphaGo pipeline rebuilt on a game small enough to solve exactly (Connect-3 on 4x5, memoised negamax), so every component is scored against perfect play: SL policy from noisy-expert games, a linear rollout policy on move features, RL self-play with an opponent pool, a value network trained on all positions vs one position per game, and PUCT search with SL priors, lambda-mixed leaf evaluation and most-visited move selection; demo: search lifts the perfect-move rate from 0.857 (network alone) to 0.981-0.989, one-per-game value data generalises better (test MSE 0.763 vs 0.785, small because games are short); honest differences: the tactical rollout policy beats the network here (0.944) so rollouts-only search is narrowly best rather than lambda = 0.5, and RL self-play gains little (0.587 vs SL); simulations x lambda / priors / value-data / RL / harder-board experiments (not run). 4 tests. |
-| 098 | [Supervised Contrastive Learning](16-Extras-optional/098-Khosla-et-al-2020-Supervised-Contrastive-Learning/) (Khosla et al.) | 2020 | the self-supervised (Eq. 1), SupCon-out (Eq. 2) and SupCon-in (Eq. 3) losses with vectorised gradients through the similarity matrix and the unit-sphere normalisation, the Eq. 4 hard-positive analysis, and two-stage training (encoder + projection, then a linear probe) vs cross-entropy on augmented 8x8 digits, all in numpy; demo: gradients match finite differences to 6e-10, L_in <= L_out (Jensen), gradient on a hard positive 9.8 vs 0.035 for an easy one, SupCon-out 0.982 vs cross-entropy 0.962 vs self-supervised 0.944, SupCon much more robust to noise and blur but less to shifts; honest notes: a tuned 200-epoch cross-entropy ties at 97.8% and L_out vs L_in shows no consistent order; seed / temperature / batch / robustness / sensitivity sweeps (not run). 4 tests. |
-| 099 | [Encoding vs Training (sparse coding / VQ)](16-Extras-optional/099-Coates-Ng-2011-Encoding-vs-Training-Sparse-Coding/) (Coates & Ng) | 2011 | the paper's feature pipeline on 8x8 digits (patches, per-patch normalisation, ZCA whitening, quadrant pooling, logistic regression with 20 labels per class) with every dictionary-training method (random, random patches, OMP-1 gain-shape VQ, OMP-k, L1 sparse coding) and every encoder (sparse coding by batched FISTA, batched OMP-k, soft threshold) mixed and matched -- the Table 1 analogue; demo: with the SC or soft-threshold encoder every dictionary scores 0.954-0.963 while the OMP-1 encoder scores 0.876-0.911, the 'natural' SC/SC 0.959 vs OMP-1/OMP-1 0.911 comparison is misleading (the VQ dictionary + soft threshold reaches 0.963), soft-threshold encoding is ~200x faster than sparse coding; honest difference: random Gaussian dictionaries are nearly as good here (16-dim patches); hyperparameter grid / dictionary size / label count / timing / CIFAR experiments (not run). 4 tests. |
-| 100 | [Matrices for Symbolic Relationships (MRE)](16-Extras-optional/100-Sutskever-Hinton-2008-Matrices-Symbolic-Relationships/) (Sutskever & Hinton) | 2008 | Matrix Relational Embedding: objects and relations as 4x4 matrices, the discriminative Eq. 1 cost and the squared-error Eq. 2 cost for higher-order facts with an exact vectorised gradient, scipy conjugate gradient with weight decay (as in the paper), mod-12 arithmetic (+ and x, 288 facts), the two isomorphic family trees (our definitions give exactly the paper's 112 cases), higher-order and incremental learning; demo: gradient exact to 3e-8, arithmetic test errors 0-1 / 5-11 / 16-21 with 30 / 60 / 90 held out (paper 0.0 / 6.8 / 24.0), family 0 / 0-1 / 1-4 (paper 0.4 / 1.2 / 2.0), +4 and +10 learned from plus / minus / inverse alone in most runs with the paper's all-or-nothing failures, discriminative higher-order cost worse on average (7.8 vs 3.7 errors of 12), incremental learning with everything frozen works; 5-run tables and matrix-size sweep (not run). 4 tests. |
-| 101 | [Bayesian Clustered Tensor Factorization](16-Extras-optional/101-Sutskever-Salakhutdinov-Tenenbaum-2009-Bayesian-Clustered-Tensor-Factorization/) (Sutskever, Salakhutdinov & Tenenbaum) | 2009 | tensor factorization a_L^T R b_R with a Chinese-Restaurant-Process clustering of the object and relation embeddings, all in numpy: MAP by conjugate gradient, then MCMC with collapsed CRP Gibbs, Normal-Inverse-Gamma cluster parameters, exact batched Gaussian draws of a_L, a_R and R, and the noise variance; BTF (one cluster) and an IRM-like block model as baselines, on relational data with planted clusters (the paper's datasets are not downloaded); demo: dense data -> MAP = BTF = BCTF (0.228 RMSE) and BCTF recovers the clusters (object ARI 0.79, relation ARI 1.00), 10% observed -> BCTF best (0.250 vs MAP 0.278), 3% observed -> MAP overfits (PR-AUC 0.38) while BTF / BCTF keep 0.88 / 0.83, block model worst everywhere; honest notes: BTF beat BCTF at 3%, no split-merge moves, cluster-variance prior tied to the MAP scale; density / dimension / cluster-recovery / sampler sweeps (not run). 4 tests. |
-| 102 | [The Malicious Use of AI](16-Extras-optional/102-Brundage-et-al-2018-Malicious-Use-of-AI/) (Brundage et al.) | 2018 report | the report's framework (dual-use, three changes to the threat landscape, three domains, four recommendations, four research areas) made quantitative from the defender's side: an abstract cost-benefit model of 'alleviating the trade-off between scale and efficacy' and a red-team report on a digit classifier (FGSM adversarial examples vs adversarial training; random and targeted label poisoning vs loss-based sanitisation); no attack tooling; demo: 400x cheaper tailoring takes tailored attempts from 0.3% to 91% of targets, harm ~9x and capable actors 2% -> 97%, defences must cut success rates by 75-85% to stand still; FGSM eps 0.2 cuts accuracy 0.95 -> 0.24 (adversarial training 0.32); targeted poisoning sends every test 7 to '1' at 0.86 overall accuracy and sanitisation does not catch it, while a 100-image trusted-set audit does; sensitivity / robustness / poisoning sweeps (not run). 3 tests. |
-| 103 | [Automation and New Tasks](16-Extras-optional/103-Acemoglu-Restrepo-2019-Automation-and-New-Tasks/) (Acemoglu & Restrepo) | 2019 | the task model (tasks on [N-1, N], capital on z <= I, CES with sigma = 0.8: task content Gamma, TFP Pi, Eq. 1 output and Eq. 2 labour share, equilibrium wages and rents) with the displacement / reinstatement / productivity / substitution effects and 'so-so' automation, plus the paper's wage-bill decomposition (productivity + composition + substitution + task content, split into displacement and reinstatement by 5-year moving averages) validated on synthetic industries with planted shocks; demo: automation lowers the labour share for every sigma while its wage effect flips sign with capital productivity (-3.5% at A_K = 0.5, +4.5% at A_K = 8), new tasks raise it, labour-augmenting technology barely moves it; the decomposition recovers net task content within ~0.05 points/yr but understates displacement and reinstatement (0.69 / 0.39 of planted, lower still with simultaneous shocks) -- the paper's 'lower bounds'; honest note: new tasks lower output in our parametrisation; sweeps (not run). 4 tests. |
+| File | What it gives you |
+|---|---|
+| **EXPLAINED.md** | The paper explained simply: the problem it solved, the key idea, the important formulas with every symbol explained, a worked example with small numbers, the paper's own results, what *our* code found (including where it disagreed with the paper), why the paper matters today, and a short quiz ("Check yourself") with hidden answers. |
+| **CODE_EXPLAINED.md** | A map of the code: which file does what, how each function connects to an equation or figure in the paper, how to run everything, and ideas to try next. |
+| **The main `.py` file** | The method itself, written from scratch with comments. |
+| **demo.py** | Runs in seconds to about half a minute and prints the paper's main effect on a small example, with short messages saying what each number means. |
+| **test_*.py** | Small automatic tests. They prove things like "this gradient is correct" or "this reproduces the number in Table 2". They finish in about a second. |
+| **experiments.py** | Larger experiments that would take minutes to hours, written so you can run them if you have the time or hardware. They were **not** run while building this repository. |
 
-## Running
+---
 
-Python 3.10+. Paper 001 needs nothing else; later papers need `numpy`, some `scipy`, `scikit-learn`, `torch`/`torchvision`, and the figures `matplotlib`. The tests need `pytest`.
+## 4. How to run it on your own computer, step by step
+
+**Step 1. Install Python.** You need version 3.10 or newer. Check with:
 
 ```bash
-cd 01-Foundations/001-McCulloch-Pitts-1943      # or any built paper's folder
+python3 --version
+```
+
+**Step 2. Download this repository.**
+
+```bash
+git clone <this repository's address>
+cd "Implementing Research Papers"
+```
+
+**Step 3. Install the libraries.** Paper 001 needs nothing extra. Later papers use these common, free libraries:
+
+```bash
+pip install numpy scipy scikit-learn torch torchvision matplotlib pytest
+```
+
+**Step 4. Pick a paper and run its demo.** For example, the very first one:
+
+```bash
+cd 01-Foundations/001-McCulloch-Pitts-1943
 python3 demo.py
+```
+
+The demo prints its results with short explanations. Compare what you see with the "What our code found" section of that paper's `EXPLAINED.md`.
+
+**Step 5. Run the tests (optional).** From inside the same folder:
+
+```bash
 python3 -m pytest -q
 ```
 
-## Notes
+You should see something like `12 passed`. That means every check in that folder succeeded.
 
-- From paper 007 on, the heavy experiments (`experiments.py`) are written but **not run** on the author's laptop; each paper's EXPLAINED.md says what was checked and gives the paper's numbers as the reference.
+**Step 6. Try the bigger experiments (optional, can be slow).**
 
-- Paper PDFs are **not** committed (see `.gitignore`); [SOURCES.txt](SOURCES.txt) lists where each was downloaded from.
-- Stage 01 follows the classic history: 001–004 are the original papers, and 005 is a modern review of them.
+```bash
+python3 experiments.py --quick        # a short version of every experiment
+python3 experiments.py --only e2      # just one experiment
+python3 experiments.py --report-only  # print saved results without re-running
+```
+
+A few later papers reuse code from an earlier paper's folder (for example, several language-model papers reuse the tiny LLaMA model from paper 056). Run them from their own folder and they will find what they need automatically.
+
+---
+
+## 5. A two-minute introduction to the words you will see
+
+You don't need to memorise these. Come back here whenever a word is unfamiliar. Each paper's `EXPLAINED.md` explains its own terms in more depth.
+
+| Word | Plain meaning |
+|---|---|
+| **Neural network** | A program made of many simple units ("neurons") connected together. Each connection has a number (a **weight**) that says how strongly one unit influences another. |
+| **Training / learning** | Adjusting the weights, a little at a time, so the network's answers get closer to the right ones. |
+| **Loss** | A single number measuring how wrong the network currently is. Training tries to make it smaller. |
+| **Gradient** | For each weight, the direction and amount it should change to reduce the loss fastest. |
+| **Backpropagation** | The method for computing all the gradients efficiently, by passing the error backwards through the network (paper 004). |
+| **Overfitting** | When a model memorises its training examples instead of learning the general rule, so it does well on old examples and badly on new ones. |
+| **Layer / deep network** | Units are organised in layers; "deep" means many layers stacked on top of each other. |
+| **Convolution (CNN)** | A way of processing images by sliding the same small pattern detector across the whole picture (papers 013–016). |
+| **Recurrent network (RNN, LSTM)** | A network that reads a sequence (like a sentence) one step at a time, keeping a memory of what it has read so far (papers 021–027). |
+| **Embedding** | Turning a word (or image, or anything) into a list of numbers, so that similar things get similar numbers (paper 019). |
+| **Attention** | Letting a model, at each step, look back at whichever parts of the input are most relevant right now (paper 028). |
+| **Transformer** | A network built almost entirely from attention. It is the basis of modern language models (paper 034). |
+| **Language model / LLM** | A model trained to predict the next word in text. "Large" language models are huge versions trained on enormous amounts of text (papers 048–058). |
+| **Pretraining / fine-tuning** | First learn general knowledge from lots of data (pretraining), then adjust the model for a specific job with a smaller amount of data (fine-tuning). |
+| **Generative model** | A model that creates new things (images, text, sound) rather than just labelling them (papers 039–047). |
+| **Reinforcement learning (RL)** | Learning by trial and error from rewards, like training a pet with treats (papers 066–069, 095–097). |
+| **RLHF / alignment** | Using human (or AI) judgements of which answer is better to teach a model to be helpful and harmless (papers 066–069). |
+| **Retrieval / RAG** | Letting a model look things up in a collection of documents before answering, instead of relying only on memory (papers 070–072). |
+| **Quantization** | Storing a model's numbers with fewer bits (for example 4 bits instead of 16), so it uses less memory and runs faster (papers 074–078). |
+| **Parameters** | Another word for the weights. "7B parameters" means 7 billion adjustable numbers. |
+| **Toy / synthetic data** | Small, made-up data designed so the effect a paper describes can be seen clearly in seconds. |
+
+---
+
+## 6. The story of AI in 16 stages, and every paper explained
+
+Each stage below starts with a short story of **what problem the stage is about** and how its papers connect. Then each paper gets three short parts:
+
+- **The idea:** what the paper is about, in everyday words.
+- **What we built:** what the code in its folder does.
+- **What we saw:** what happened when we ran it, including any surprises.
+
+Click a paper's title to open its folder.
+
+---
+
+### Stage 01 · Foundations: what is a neural network?
+
+**The story.** In the 1940s, scientists wondered whether thinking could be explained by simple on/off brain cells wired together. This stage follows that question: first a neuron as a tiny logic switch, then a network that can *learn*, then the discovery that a single layer has serious limits, and finally the method (backpropagation) that lets networks with many layers learn. Everything later in this repository is built on these ideas.
+
+#### 001 · [A Logical Calculus of the Ideas Immanent in Nervous Activity](01-Foundations/001-McCulloch-Pitts-1943/) — McCulloch & Pitts, 1943
+- **The idea:** a brain cell can be treated as a tiny switch that "fires" when enough of its inputs are on. Wire enough of these switches together and they can compute any logical rule. This was the first mathematical model of a neuron.
+- **What we built:** a simulator for these networks, the examples from the paper's first figure, networks that remember things using loops, and a "compiler" that turns a written logic rule into a working network.
+- **What we saw:** every example in the paper works, including the famous illusion where touching something cold for a moment can feel hot.
+
+#### 002 · [The Perceptron](01-Foundations/002-Rosenblatt-1958/) — Rosenblatt, 1958
+- **The idea:** the first network that **learns from examples**. It is shown pictures, guesses a category, and strengthens or weakens its connections depending on whether it was right.
+- **What we built:** the paper's full "photo-perceptron" (a model eye connected to randomly wired units), its learning rules, and the probability formulas that predict how well it will do.
+- **What we saw:** the formulas match the simulation, and we reproduced the paper's figures showing the difference between memorising the examples it saw and recognising new ones.
+
+#### 003 · [Perceptrons (Introduction)](01-Foundations/003-Minsky-Papert-1969/) — Minsky & Papert, 1969
+- **The idea:** a careful proof of what a single-layer perceptron **cannot** do. Some simple-sounding questions, like "is this shape all in one connected piece?", are impossible for it. This book is often blamed for slowing AI research for years.
+- **What we built:** the formal perceptron, a perceptron that checks whether a shape is convex, and computer-checked versions of the book's proofs.
+- **What we saw:** the proofs hold. We also measured, as an extra, how complicated a perceptron must be to compute "parity" (is the number of on-pixels odd?).
+
+#### 004 · [Learning Representations by Back-Propagating Errors](01-Foundations/004-Rumelhart-Hinton-Williams-1986/) — Rumelhart, Hinton & Williams, 1986
+- **The idea:** **backpropagation**, the method that finally let networks with hidden layers learn. The error at the output is passed backwards, layer by layer, to work out how every weight should change. Almost every network since uses it.
+- **What we built:** backpropagation for any layered network (checked against a slow numerical method), plus its version for networks that run over time.
+- **What we saw:** we reproduced the paper's mirror-symmetry network (with the same neat 1 : 2 : 4 pattern of weights) and its family-tree network, which invents its own features like nationality and generation. **Surprise:** following the paper's exact recipe, the family-tree network often gets stuck, because the learning signal fades as it travels back through the layers.
+
+#### 005 · [Perceptron: Learning, Generalization, Model Selection, Fault Tolerance, and Role in the Deep Learning Era](01-Foundations/005-Du-et-al-2022/) — Du, Leung, Mow & Swamy, 2022
+- **The idea:** a modern review of 70 years of perceptron research, tying Stage 01 together.
+- **What we built:** the classic learning rules, a multi-layer network with backpropagation, 11 different training methods, and the usual tricks for avoiding overfitting.
+- **What we saw:** we reproduced the review's experiment on the classic Iris flower dataset.
+
+---
+
+### Stage 02 · Training deep networks: making learning actually work
+
+**The story.** Backpropagation works on paper, but in practice deep networks trained badly: learning was slow, signals faded or exploded, and models memorised instead of generalising. This stage collects the practical fixes that made deep learning work: preparing the data, starting the weights at sensible values, smarter ways of taking steps downhill, randomly switching off units during training, and keeping each layer's numbers in a healthy range.
+
+#### 006 · [Efficient BackProp](02-Training-Deep-Networks/006-LeCun-et-al-1998-Efficient-BackProp/) — LeCun, Bottou, Orr & Müller, 1998
+- **The idea:** a practical handbook of tricks: scale the inputs, choose a good activation function, start the weights carefully, pick the step size wisely.
+- **What we built:** every trick, each tested on handwritten digits, plus tools that measure the "shape" of the loss to choose step sizes automatically.
+- **What we saw:** the tricks help as described. **Surprise:** the paper's own formula for the largest safe step size is slightly wrong (it gives 2.38; the correct value is 2.0), because it forgets one detail.
+
+#### 007 · [Understanding the Difficulty of Training Deep Feedforward Neural Networks](02-Training-Deep-Networks/007-Glorot-Bengio-2010-Difficulty-Training-Deep-FF/) — Glorot & Bengio, 2010
+- **The idea:** explains *why* deep networks got stuck: with badly chosen starting weights, signals shrink or blow up as they pass through layers. Proposes **"Xavier" initialisation**, a simple formula for starting weights that keeps signals steady.
+- **What we built:** both ways of starting weights, several activation functions, and tools that watch the signals in every layer.
+- **What we saw:** our measurement of how well signals survive (0.49 with the old method vs 0.80 with Xavier) matches the paper's 0.5 vs 0.8.
+
+#### 008 · [On the Importance of Initialization and Momentum in Deep Learning](02-Training-Deep-Networks/008-Sutskever-et-al-2013-Initialization-and-Momentum/) — Sutskever, Martens, Dahl & Hinton, 2013
+- **The idea:** **momentum** means letting each training step keep some of the previous step's direction, like a ball rolling downhill. Combined with good starting weights, it lets plain training handle problems thought to need much fancier methods.
+- **What we built:** classical momentum and "Nesterov" momentum, the paper's schedule, and its special ways of starting weights.
+- **What we saw:** the paper's theorem checks out exactly. **Surprise:** in some settings Nesterov momentum can blow up where the classic version still works.
+
+#### 009 · [Improving Neural Networks by Preventing Co-adaptation of Feature Detectors](02-Training-Deep-Networks/009-Hinton-et-al-2012-Preventing-Co-adaptation/) — Hinton et al., 2012
+- **The idea:** the first version of **dropout**: during training, randomly switch off half the units each time, so no unit can rely too much on any other. This makes the network more robust.
+- **What we built:** dropout, the weight limit the paper uses, and the "average network" used at test time.
+- **What we saw:** by trying all 1,024 possible smaller networks, we proved the test-time network is *exactly* their (geometric) average, as the paper claims.
+
+#### 010 · [Dropout: A Simple Way to Prevent Neural Networks from Overfitting](02-Training-Deep-Networks/010-Srivastava-et-al-2014-Dropout/) — Srivastava et al., 2014
+- **The idea:** the full study of dropout: why it works, how to tune it, and variants of it.
+- **What we built:** dropout networks, a version that uses random noise instead of on/off switches, and the paper's comparison with other methods.
+- **What we saw:** we confirmed the paper's mathematical result that, for a simple model, dropout is the same as a well-known penalty on large weights.
+
+#### 011 · [Adam: A Method for Stochastic Optimization](02-Training-Deep-Networks/011-Kingma-Ba-2015-Adam/) — Kingma & Ba, 2015
+- **The idea:** **Adam**, the most widely used training method today. It adapts the step size for every weight separately, based on how that weight's gradient has behaved recently.
+- **What we built:** Adam and six related methods from scratch.
+- **What we saw:** our Adam gives the same results as PyTorch's official version, and the paper's guarantees (such as the limit on step size) hold.
+
+#### 012 · [Batch Normalization](02-Training-Deep-Networks/012-Ioffe-Szegedy-2015-Batch-Normalization/) — Ioffe & Szegedy, 2015
+- **The idea:** inside the network, keep each layer's numbers centred and of similar size during training. This made training much faster and more stable.
+- **What we built:** batch normalisation by hand, including how it learns and how it behaves at test time.
+- **What we saw:** our hand-written version matches PyTorch's, and the paper's example of a problem it fixes behaves as described.
+
+---
+
+### Stage 03 · Seeing: networks for images
+
+**The story.** Images are huge (millions of numbers) and the same object can appear anywhere in a picture. Convolutional networks solve this by sliding small pattern detectors across the image. This stage follows them from reading handwritten cheques in the 1990s to the 2012 breakthrough on ImageNet that started the modern deep-learning boom, and on to networks hundreds of layers deep.
+
+#### 013 · [Gradient-Based Learning Applied to Document Recognition (LeNet-5)](03-CNNs-and-Vision/013-LeCun-et-al-1998-LeNet5-Gradient-Based-Learning/) — LeCun et al., 1998
+- **The idea:** **LeNet-5**, a convolutional network that read handwritten digits on bank cheques. It introduced the building blocks still used today: convolution, pooling and shared weights.
+- **What we built:** LeNet-5 exactly as described, down to its unusual connection pattern and exactly 60,000 adjustable numbers.
+- **What we saw:** the details match the paper, including why one of its loss choices makes all outputs collapse to the same answer.
+
+#### 014 · [ImageNet Classification with Deep Convolutional Neural Networks (AlexNet)](03-CNNs-and-Vision/014-Krizhevsky-et-al-2012-AlexNet/) — Krizhevsky, Sutskever & Hinton, 2012
+- **The idea:** **AlexNet** won the 2012 ImageNet competition by a huge margin, using a deep convolutional network, a simple activation called ReLU, dropout, and graphics cards. This is often called the start of the deep-learning revolution.
+- **What we built:** AlexNet with its original two-GPU design, its normalisation trick and its data-enlarging tricks (cropping, flipping, colour changes).
+- **What we saw:** our model has exactly the expected number of parameters (about 61 million). The full ImageNet training is written but not run.
+
+#### 015 · [Very Deep Convolutional Networks for Large-Scale Image Recognition (VGG)](03-CNNs-and-Vision/015-Simonyan-Zisserman-2015-VGG/) — Simonyan & Zisserman, 2015
+- **The idea:** **VGG** showed that simply stacking many small 3×3 filters, making the network deeper, gives better results.
+- **What we built:** all six network designs from the paper, with their exact sizes.
+- **What we saw:** the sizes match the paper exactly (138 million parameters for the most famous version), and we showed how badly very deep networks train without a careful start.
+
+#### 016 · [Deep Residual Learning for Image Recognition (ResNet)](03-CNNs-and-Vision/016-He-et-al-2016-ResNet/) — He et al., 2016
+- **The idea:** **skip connections**: let each block add its output to its input, so the signal has a shortcut path. This made it possible to train networks with over 100 layers, and the idea is now in almost every modern network, including transformers.
+- **What we built:** ResNets from 18 to 152 layers, and the very deep small versions (up to 1,202 layers) from the paper.
+- **What we saw:** the sizes and amounts of computation match the paper exactly, and we measured how plain networks without shortcuts struggle as they get deeper.
+
+---
+
+### Stage 04 · What networks really learn: surprises
+
+**The story.** Once deep networks worked, researchers found two strange things. They can be fooled by changes to an image so small a person can't see them, and they can perfectly memorise completely random labels. Both papers make you rethink what "learning" means for these models.
+
+#### 017 · [Intriguing Properties of Neural Networks](04-Robustness-and-Generalization/017-Szegedy-et-al-2013-Intriguing-Properties/) — Szegedy et al., 2013
+- **The idea:** discovered **adversarial examples**: tiny, invisible changes to an image that make a network confidently give the wrong answer.
+- **What we built:** the paper's method for finding the smallest such change, and its way of measuring how sensitive each layer is.
+- **What we saw:** on a simple case where the answer is known, the method finds exactly the smallest change.
+
+#### 018 · [Understanding Deep Learning Requires Rethinking Generalization](04-Robustness-and-Generalization/018-Zhang-et-al-2017-Rethinking-Generalization/) — Zhang et al., 2017
+- **The idea:** showed that networks can **memorise random labels** perfectly. This means traditional explanations of why they work on new data can't be the whole story.
+- **What we built:** all the paper's randomisation tests (shuffled labels, random pixels), and its proof that a fairly small network can fit any labels at all.
+- **What we saw:** the proof's construction works as stated.
+
+---
+
+### Stage 05 · Words and sequences: from word vectors to attention
+
+**The story.** Language comes as sequences, and the meaning of a word depends on its neighbours. This stage builds up, one step at a time, to the most important idea in modern AI. First, words become lists of numbers (embeddings). Then networks with memory read sentences word by word (RNNs and LSTMs). Then two networks work together to translate whole sentences (sequence-to-sequence). Finally, **attention** lets the translator look back at the right source words at each step.
+
+#### 019 · [Distributed Representations of Words and Phrases (Word2Vec)](05-Words-and-Sequences/019-Mikolov-et-al-2013-Word2Vec-Negative-Sampling/) — Mikolov et al., 2013
+- **The idea:** **Word2Vec** turns each word into a list of numbers so that similar words get similar numbers, learned simply by predicting nearby words. It's famous for arithmetic like *king − man + woman ≈ queen*.
+- **What we built:** the model with every training shortcut the paper describes, each checked for correctness.
+- **What we saw:** all the training methods compute correct gradients. The full experiment on a large text collection is written but not run.
+
+#### 020 · [Exploiting Similarities among Languages for Machine Translation](05-Words-and-Sequences/020-Mikolov-et-al-2013-Similarities-Among-Languages/) — Mikolov, Le & Sutskever, 2013
+- **The idea:** word vectors from two languages have similar shapes, so a simple rotation-like mapping can translate words between them.
+- **What we built:** the mapping between languages, the paper's accuracy measures and its baselines.
+- **What we saw:** the pieces work as described; the full experiment on real language data is written but not run.
+
+#### 021 · [Long Short-Term Memory (LSTM)](05-Words-and-Sequences/021-Hochreiter-Schmidhuber-1997-LSTM/) — Hochreiter & Schmidhuber, 1997
+- **The idea:** the **LSTM**, a memory cell for sequence networks that can keep information for a long time without it fading. It powered speech recognition and translation for two decades.
+- **What we built:** the original LSTM (without the "forget gate" added later), with the paper's own learning rule.
+- **What we saw:** the memory cell keeps its information perfectly as designed, and we measured a known weakness (its stored value slowly drifts) together with the paper's fix.
+
+#### 022 · [Generating Text with Recurrent Neural Networks](05-Words-and-Sequences/022-Sutskever-et-al-2011-Generating-Text-with-RNNs/) — Sutskever, Martens & Hinton, 2011
+- **The idea:** a network that writes text **one character at a time**, using a special design where each input character changes how the memory updates.
+- **What we built:** three network designs and a special second-order training method.
+- **What we saw:** the training method's maths checks out. The large training run is written but not run.
+
+#### 023 · [Training Recurrent Neural Networks (PhD thesis)](05-Words-and-Sequences/023-Sutskever-2013-PhD-Thesis-Training-RNNs/) — Sutskever, 2013
+- **The idea:** a long study of how to make sequence networks learn hard, long-range patterns, including a model that learns videos of bouncing balls.
+- **What we built:** the thesis's video model and its improved training method, plus all eight "hard problems" it uses as tests.
+- **What we saw:** the methods compute what they should, checked against exact calculations.
+
+#### 024 · [Recurrent Neural Network Regularization](05-Words-and-Sequences/024-Zaremba-et-al-2014-RNN-Regularization/) — Zaremba, Sutskever & Vinyals, 2014
+- **The idea:** dropout (from Stage 02) didn't work for LSTMs until this paper showed **where** to apply it: between layers, not on the memory connections.
+- **What we built:** a deep LSTM language model with the paper's dropout placement, plus the two wrong placements for comparison.
+- **What we saw:** the dropout lands exactly where intended. The full training runs are written but not run.
+
+#### 025 · [An Empirical Exploration of Recurrent Network Architectures](05-Words-and-Sequences/025-Jozefowicz-et-al-2015-Empirical-Exploration-RNN-Architectures/) — Jozefowicz, Zaremba & Sutskever, 2015
+- **The idea:** searched through thousands of variations of the LSTM to see which parts matter. A key finding: starting the "forget gate" open makes a big difference.
+- **What we built:** all ten memory-cell designs from the paper and the search procedure itself.
+- **What we saw:** our general framework reproduces the standard LSTM and GRU exactly.
+
+#### 026 · [Learning Phrase Representations using an RNN Encoder–Decoder](05-Words-and-Sequences/026-Cho-et-al-2014-RNN-Encoder-Decoder/) — Cho et al., 2014
+- **The idea:** introduced the **GRU** (a simpler memory cell than the LSTM) and the **encoder–decoder**: one network reads a sentence into a summary, another writes a translation from that summary.
+- **What we built:** the GRU and the full encoder–decoder from the paper's appendix.
+- **What we saw:** the parts behave as specified; the translation experiments are written but not run.
+
+#### 027 · [Sequence to Sequence Learning with Neural Networks](05-Words-and-Sequences/027-Sutskever-et-al-2014-Seq2Seq/) — Sutskever, Vinyals & Le, 2014
+- **The idea:** **sequence-to-sequence**: a deep LSTM reads a whole sentence and another writes the translation. A surprising trick: **reversing the input sentence** makes learning much easier.
+- **What we built:** the model, input reversal, and "beam search" (keeping several candidate translations at once).
+- **What we saw:** the parts work and beam search finds the best answer on a test case where we know it; the full translation runs are written but not run.
+
+#### 028 · [Neural Machine Translation by Jointly Learning to Align and Translate (Attention)](05-Words-and-Sequences/028-Bahdanau-et-al-2015-Attention-NMT/) — Bahdanau, Cho & Bengio, 2015
+- **The idea:** **attention**. Instead of squeezing a whole sentence into one summary, the translator looks back at the most relevant source words at each step. This is the key ingredient of transformers.
+- **What we built:** the paper's attention model exactly, and the older model without attention.
+- **What we saw:** on reversing 16-symbol sequences, the old model managed 59% while the attention model got 100%, and the attention pattern clearly showed it "looking" at the right positions.
+
+#### 029 · [Show and Tell: A Neural Image Caption Generator](05-Words-and-Sequences/029-Vinyals-et-al-2015-Show-and-Tell/) — Vinyals, Toshev, Bengio & Erhan, 2015
+- **The idea:** describe a picture in a sentence by connecting an image network to a sentence-writing LSTM.
+- **What we built:** the captioning model and the standard caption-scoring measures.
+- **What we saw:** in a small made-up picture world, it wrote correct captions for combinations it had never seen. It also "beat humans" on the automatic score, showing why that score can be misleading.
+
+#### 030 · [Grammar as a Foreign Language](05-Words-and-Sequences/030-Vinyals-et-al-2015-Grammar-as-Foreign-Language/) — Vinyals et al., 2015
+- **The idea:** treat working out a sentence's grammatical structure as "translating" it into a bracketed tree.
+- **What we built:** converting trees to and from text, the attention model, and the standard scoring tool.
+- **What we saw:** on a toy grammar, attention clearly helped (89.8 vs 80.5 on the standard score, with a bigger gap on long sentences).
+
+#### 031 · [Pointer Networks](05-Words-and-Sequences/031-Vinyals-et-al-2015-Pointer-Networks/) — Vinyals, Fortunato & Jaitly, 2015
+- **The idea:** use attention to **point** at items in the input, so the output can only be input positions. Useful for sorting, or for drawing the outline around a set of points.
+- **What we built:** the model, its baselines, and exact solvers for the geometry problems to compare against.
+- **What we saw:** one model could sort lists of different lengths, including a length it had never seen.
+
+#### 032 · [Order Matters: Sequence to Sequence for Sets](05-Words-and-Sequences/032-Vinyals-et-al-2015-Order-Matters/) — Vinyals, Bengio & Kudlur, 2016
+- **The idea:** when the input or output is really a *set*, the order you present it in still affects how well the model learns, and you can design for that.
+- **What we built:** the paper's order-independent reader and its search over output orders.
+- **What we saw:** on sorting, the paper's design (84%) beat the pointer network (75%), as the paper reports.
+
+#### 033 · [Neural Machine Translation in Linear Time (ByteNet)](05-Words-and-Sequences/033-Kalchbrenner-et-al-2016-ByteNet/) — Kalchbrenner et al., 2016
+- **The idea:** process sequences with **convolutions** that have growing gaps ("dilations"), instead of step-by-step networks, so the work grows only in proportion to the length.
+- **What we built:** the full model with its dilated convolutions.
+- **What we saw:** dilation let it learn a pattern 10 steps back that a plain stack could not. **Surprise:** a number in the paper (a "receptive field" of 315) doesn't match its own formula; we get 373.
+
+---
+
+### Stage 06 · Transformers: attention is all you need
+
+**The story.** In 2017 a team showed you could drop the step-by-step memory entirely and build a network out of attention alone. The **transformer** trains faster and scales further than anything before it, and it is the engine inside ChatGPT, BERT and image models alike. This stage covers the original design, ways to make it faster and handle longer inputs, and its use for understanding text (BERT) and for images (ViT).
+
+#### 034 · [Attention Is All You Need (the Transformer)](06-Transformers/034-Vaswani-et-al-2017-Attention-Is-All-You-Need/) — Vaswani et al., 2017
+- **The idea:** the **Transformer**. Every word looks at every other word through attention (many "heads" at once), and a trick called positional encoding tells it the word order.
+- **What we built:** the complete model from scratch, with its training tricks and beam search.
+- **What we saw:** our sizes are close to the paper's (63 vs 65 million parameters for the base model). On a reversing task it got 50 out of 50 right, with one attention head clearly learning the reversal.
+
+#### 035 · [Fast Transformer Decoding: One Write-Head is All You Need](06-Transformers/035-Shazeer-2019-Multi-Query-Attention/) — Shazeer, 2019
+- **The idea:** **multi-query attention**: share one set of "keys" and "values" across all heads, which makes text generation much faster with little loss in quality.
+- **What we built:** standard, multi-query and the in-between "grouped-query" attention, with the memory cache used during generation.
+- **What we saw:** the cache became 8 times smaller and generation on a laptop processor got faster (6.0 → 2.2 milliseconds per step).
+
+#### 036 · [Generating Long Sequences with Sparse Transformers](06-Transformers/036-Child-et-al-2019-Sparse-Transformers/) — Child, Gray, Radford & Sutskever, 2019
+- **The idea:** let each position attend to only a structured subset of others, so very long sequences become affordable.
+- **What we built:** both of the paper's sparse attention patterns.
+- **What we saw:** 11 to 32 times fewer pairs to compute; one pattern copied repeating structure as well as full attention, while the other struggled.
+
+#### 037 · [BERT](06-Transformers/037-Devlin-et-al-2019-BERT/) — Devlin, Chang, Lee & Toutanova, 2019
+- **The idea:** **BERT** learns language by filling in hidden words using context from **both** sides, then is fine-tuned for many tasks.
+- **What we built:** the full recipe: word pieces, hiding 15% of words, the "is this the next sentence?" task, and heads for classification and question answering.
+- **What we saw:** when the missing word depends on what comes after it, BERT-style training recovered it 100% of the time, against 9.5% for a left-to-right model.
+
+#### 038 · [An Image is Worth 16x16 Words (Vision Transformer)](06-Transformers/038-Dosovitskiy-et-al-2021-ViT/) — Dosovitskiy et al., 2021
+- **The idea:** cut an image into small patches, treat each patch like a word, and use a plain transformer.
+- **What we built:** the Vision Transformer and the paper's tools for looking inside it.
+- **What we saw:** with very little data, a convolutional network won easily (100% vs 40.8%). That matches the paper's point that transformers need lots of data because they have fewer built-in assumptions about images.
+
+---
+
+### Stage 07 · Generative models: networks that create
+
+**The story.** Instead of labelling data, these models *create* it: new faces, digits, pictures from a sentence. This stage covers the main families: VAEs (compress and rebuild), GANs (a forger against a detective), pixel-by-pixel models, invertible "flows", and finally DALL·E, which draws images from text descriptions.
+
+#### 039 · [Auto-Encoding Variational Bayes (VAE)](07-Generative-Models/039-Kingma-Welling-2014-VAE/) — Kingma & Welling, 2014
+- **The idea:** the **VAE** squeezes data into a small "code" and learns to rebuild it. A clever "reparameterisation trick" makes this trainable.
+- **What we built:** the VAE, both of the paper's estimators, and the older methods it beat.
+- **What we saw:** the trick made learning signals 8 to 12 times less noisy, and the VAE beat the older "wake-sleep" method on digits.
+
+#### 040 · [Improved Variational Inference with Inverse Autoregressive Flow](07-Generative-Models/040-Kingma-et-al-2016-Inverse-Autoregressive-Flow/) — Kingma et al., 2016
+- **The idea:** make a VAE's guesses about the hidden code more flexible by passing them through a chain of invertible steps (a "flow").
+- **What we built:** the flow and its building blocks.
+- **What we saw:** the simple version was stuck with a fixed error, while the flow brought it close to zero.
+
+#### 041 · [Variational Lossy Autoencoder](07-Generative-Models/041-Chen-et-al-2017-Variational-Lossy-Autoencoder/) — Chen et al., 2017
+- **The idea:** control **what** information the code stores (for example, the overall shape but not fine texture) by limiting what the decoder can see.
+- **What we built:** decoders that see only a small window, and the paper's information accounting.
+- **What we saw:** in a toy with one important global fact, the limited decoder kept exactly that fact in the code, as the paper predicts.
+
+#### 042 · [Generative Adversarial Nets (GAN)](07-Generative-Models/042-Goodfellow-et-al-2014-GAN/) — Goodfellow et al., 2014
+- **The idea:** a **forger** network makes fake samples and a **detective** network tries to spot them. Each improves by competing with the other.
+- **What we built:** the original GAN and the paper's way of measuring it.
+- **What we saw:** the theory holds exactly, and a one-dimensional GAN learned its target. We also reproduced two famous problems: training swings back and forth, and the forger can collapse to producing only a few kinds of output.
+
+#### 043 · [InfoGAN](07-Generative-Models/043-Chen-et-al-2016-InfoGAN/) — Chen et al., 2016
+- **The idea:** add "control knobs" to a GAN that end up meaning something (like digit type or slant), without any labels.
+- **What we built:** InfoGAN with its information-based training.
+- **What we saw:** the knobs grouped the data correctly 100% of the time without labels, against 26% for a plain GAN.
+
+#### 044 · [Wasserstein GAN](07-Generative-Models/044-Arjovsky-et-al-2017-Wasserstein-GAN/) — Arjovsky, Chintala & Bottou, 2017
+- **The idea:** use a different way of measuring how far apart two distributions are (the "earth mover's distance"), which gives smoother learning signals and steadier GAN training.
+- **What we built:** all the distance measures, the new critic network and its training.
+- **What we saw:** the old measure gave a flat, useless signal while the new one gave a steady slope, and the new GAN smoothly moved to the right answer.
+
+#### 045 · [PixelCNN++](07-Generative-Models/045-Salimans-et-al-2017-PixelCNN-plus-plus/) — Salimans et al., 2017
+- **The idea:** generate an image one pixel at a time, each pixel predicted from the ones before it, with several improvements over earlier versions.
+- **What we built:** the paper's pixel probability model and its network design.
+- **What we saw:** the simpler model memorised its training images, while the improved one generalised better.
+
+#### 046 · [Glow](07-Generative-Models/046-Kingma-Dhariwal-2018-Glow/) — Kingma & Dhariwal, 2018
+- **The idea:** a fully **invertible** network: you can turn an image into a code and back again exactly. That makes exact probability calculations possible.
+- **What we built:** all of Glow's building blocks.
+- **What we saw:** the network was exactly invertible, and its fast probability calculation matched the slow exact one to six decimal places.
+
+#### 047 · [Zero-Shot Text-to-Image Generation (DALL·E)](07-Generative-Models/047-Ramesh-et-al-2021-DALL-E/) — Ramesh et al., 2021
+- **The idea:** **DALL·E** turns images into "visual words" and trains one transformer on text followed by image, so it can draw a picture from a caption.
+- **What we built:** the image-to-token compressor, the text-plus-image transformer, and the trick of generating many images and keeping the best.
+- **What we saw:** it composed colours and positions it had never seen together about half the time ("inconsistent", as the paper honestly says), and picking the best of several samples raised accuracy from 83% to 100%.
+
+---
+
+### Stage 08 · Pretraining and scaling: how large language models are made
+
+**The story.** This is where ChatGPT-style models come from. Train a transformer to predict the next word on huge amounts of text, and it picks up grammar, facts and even skills. Make it bigger and feed it more data, and it gets predictably better. This stage covers the GPT series, the "scaling laws" that predict how good a model will be, open models like LLaMA, models for images and text (CLIP), code (Codex) and speech (Whisper), and how GPT-4 was evaluated.
+
+#### 048 · [Improving Language Understanding by Generative Pre-Training (GPT)](08-Pretraining-and-Scaling-LLMs/048-Radford-et-al-2018-GPT/) — Radford et al., 2018
+- **The idea:** **GPT**: first learn language by predicting the next word on lots of text, then fine-tune on a small labelled task.
+- **What we built:** the model, the pretraining, and the paper's ways of turning tasks into text.
+- **What we saw:** with only 40 labelled examples, the pretrained model reached 80–82% against 73% when trained from scratch. It could also classify reviews with **no labels at all** (89%), just by comparing "very good" with "very bad".
+
+#### 049 · [Language Models are Unsupervised Multitask Learners (GPT-2)](08-Pretraining-and-Scaling-LLMs/049-Radford-et-al-2019-GPT-2/) — Radford et al., 2019
+- **The idea:** **GPT-2** showed that a big enough language model can do tasks like answering questions **without any fine-tuning**, just from how the question is phrased.
+- **What we built:** GPT-2's way of splitting text into tokens, its exact model sizes, and its method for detecting test data leaked into training.
+- **What we saw:** in a toy "web", it answered questions about facts it had only seen written as normal prose.
+
+#### 050 · [Language Models are Few-Shot Learners (GPT-3)](08-Pretraining-and-Scaling-LLMs/050-Brown-et-al-2020-GPT3/) — Brown et al., 2020
+- **The idea:** **GPT-3** (175 billion parameters) can learn a new task from a few examples written in the prompt (**in-context learning**), with no retraining.
+- **What we built:** GPT-3's size and compute formulas, its data filtering and de-duplication, and the prompt formats.
+- **What we saw:** a small model clearly learned from the examples in its context, coming within 0.02 of the best possible score on a task designed to measure this.
+
+#### 051 · [Scaling Laws for Neural Language Models](08-Pretraining-and-Scaling-LLMs/051-Kaplan-et-al-2020-Scaling-Laws/) — Kaplan et al., 2020
+- **The idea:** a model's error falls smoothly and predictably as you add parameters, data and computing power, following simple "power laws".
+- **What we built:** every formula in the paper and a calculator for the best model size for a given budget.
+- **What we saw:** the calculator agrees with the paper's own table to within about a factor of 2, and the paper's numbers fit together consistently.
+
+#### 052 · [Training Compute-Optimal Large Language Models (Chinchilla)](08-Pretraining-and-Scaling-LLMs/052-Hoffmann-et-al-2022-Chinchilla/) — Hoffmann et al., 2022
+- **The idea:** a correction to the scaling laws: for the best results, train on **far more data**, about 20 words (tokens) per parameter. Models before this were too big for the data they saw.
+- **What we built:** all three of the paper's methods for finding the best balance.
+- **What we saw:** all three recovered the correct answer from data we generated, and at equal computing cost the "Chinchilla" balance scored better than the older approach.
+
+#### 053 · [Learning Transferable Visual Models from Natural Language Supervision (CLIP)](08-Pretraining-and-Scaling-LLMs/053-Radford-et-al-2021-CLIP/) — Radford et al., 2021
+- **The idea:** **CLIP** learns to match pictures with their captions, which lets it recognise new kinds of images just from a text description, with no labelled examples.
+- **What we built:** CLIP's training method and its "zero-shot" classifier built from text prompts.
+- **What we saw:** trained only on captions, it recognised digits 88% of the time with no digit labels, and matching captions worked far better than predicting the exact caption words (88% vs 49%).
+
+#### 054 · [Evaluating Large Language Models Trained on Code (Codex)](08-Pretraining-and-Scaling-LLMs/054-Chen-et-al-2021-Codex/) — Chen et al., 2021
+- **The idea:** **Codex** writes programs. The paper's key contribution is judging code by **running it against tests** ("pass@k"), not by how similar it looks to a reference.
+- **What we built:** the fair way of computing pass@k, a safe harness for running generated code, and sampling settings.
+- **What we saw:** a buggy program scored high on text similarity while a correct one scored low, which shows why running tests matters.
+
+#### 055 · [Robust Speech Recognition via Large-Scale Weak Supervision (Whisper)](08-Pretraining-and-Scaling-LLMs/055-Radford-et-al-2023-Whisper/) — Radford et al., 2022
+- **The idea:** **Whisper** learns speech recognition from 680,000 hours of imperfectly labelled audio, and becomes robust to noise and accents.
+- **What we built:** Whisper's audio processing, model design and output format.
+- **What we saw:** a tiny model trained only on clean sound fell apart with any noise, while one trained on varied noise stayed accurate, which is the paper's main lesson.
+
+#### 056 · [LLaMA: Open and Efficient Foundation Language Models](08-Pretraining-and-Scaling-LLMs/056-Touvron-et-al-2023-LLaMA/) — Touvron et al., 2023
+- **The idea:** **LLaMA**, a family of openly released models trained on public data, with several small design improvements.
+- **What we built:** a tiny LLaMA with all its improvements. Later papers in this repository reuse it.
+- **What we saw:** the paper's model sizes, training time and carbon figures match our calculations, and our efficient attention gives the same answer as the slow version.
+
+#### 057 · [GPT-4 Technical Report](08-Pretraining-and-Scaling-LLMs/057-OpenAI-2023-GPT-4-Technical-Report/) — OpenAI, 2023
+- **The idea:** the report keeps the model's design secret, but explains how OpenAI **predicted** GPT-4's performance from much smaller models, and how it checked calibration and test-data leaks.
+- **What we built:** those prediction and checking methods.
+- **What we saw:** predicting a real tiny model's result from smaller ones came within 4.8%, and the leak checker caught copied text but missed paraphrases.
+
+#### 058 · [GPT-4o System Card](08-Pretraining-and-Scaling-LLMs/058-OpenAI-2024-GPT-4o-System-Card/) — OpenAI, 2024
+- **The idea:** how a model is evaluated for safety before release: risk categories, scoring rules, and checks such as making sure the voice model only speaks in approved voices.
+- **What we built:** the scoring rules and a toy voice-checking system.
+- **What we saw:** the voice checker shows a real trade-off: to catch a very similar-sounding voice, it must also wrongly flag many approved clips.
+
+---
+
+### Stage 09 · Reasoning and agents: getting more out of language models
+
+**The story.** Once you have a language model, how do you make it think more carefully, check its own work, and act in the world? This stage covers "think step by step" prompting, a second model that checks answers, and **agents**: models that reason, use tools like search, remember, and plan.
+
+#### 059 · [Chain-of-Thought Prompting Elicits Reasoning](09-Reasoning-and-Agents/059-Wei-et-al-2022-Chain-of-Thought/) — Wei et al., 2022
+- **The idea:** show the model examples that **write out their reasoning step by step**, and it reasons better on new problems.
+- **What we built:** the paper's prompts and a multi-step toy problem tested in several formats.
+- **What we saw:** step-by-step answers stayed at 100% as problems got longer, while direct answers collapsed to around 11%. Like the paper, padding with meaningless dots did not help.
+
+#### 060 · [Large Language Models are Zero-Shot Reasoners](09-Reasoning-and-Agents/060-Kojima-et-al-2022-Zero-Shot-Reasoners/) — Kojima et al., 2022
+- **The idea:** simply adding **"Let's think step by step"** to a question makes models reason better, with no examples needed.
+- **What we built:** the two-step prompting method and all 16 trigger phrases the paper compares.
+- **What we saw:** the reasoning phrase kept accuracy high (83% on the hardest level, against 13% without it), while irrelevant or misleading phrases did not help, matching the paper's pattern.
+
+#### 061 · [Training Verifiers to Solve Math Word Problems](09-Reasoning-and-Agents/061-Cobbe-et-al-2021-Training-Verifiers-Math/) — Cobbe et al., 2021
+- **The idea:** generate many candidate solutions, then use a second model (a **verifier**) to pick the one most likely to be right.
+- **What we built:** the generator, the verifier and the voting methods.
+- **What we saw:** with little training data the verifier made things worse; with more data it helped clearly (75%, then 81% with voting). The paper predicts exactly this.
+
+#### 062 · [ReAct: Synergizing Reasoning and Acting](09-Reasoning-and-Agents/062-Yao-et-al-2023-ReAct/) — Yao et al., 2023
+- **The idea:** an agent alternates **thinking** and **acting** (searching, reading) in a loop. This is the basis of most AI agents today.
+- **What we built:** a Wikipedia-like environment, the think/act/observe loop, and the paper's fallback strategies.
+- **What we saw:** a model answering from memory gave outdated answers when facts changed (3% right), while the acting agent read the pages and got 100%.
+
+#### 063 · [WebGPT: Browser-Assisted Question Answering](09-Reasoning-and-Agents/063-Nakano-et-al-2021-WebGPT/) — Nakano et al., 2021
+- **The idea:** a model that **browses the web** to answer questions, trained with human feedback on which answers are better.
+- **What we built:** a text browser, a scoring model learned from comparisons, best-of-n selection and reinforcement learning.
+- **What we saw:** a classic trap appeared. Pushing too hard on the scoring model made answers *worse* in reality while the score kept rising (the model learned that longer looked better).
+
+#### 064 · [Generative Agents: Interactive Simulacra of Human Behavior](09-Reasoning-and-Agents/064-Park-et-al-2023-Generative-Agents/) — Park et al., 2023
+- **The idea:** a town of 25 AI characters with memories, reflections and daily plans, who spread news and organise a party on their own.
+- **What we built:** the memory system with its scoring, reflection and planning, plus the town (with simple stand-ins in place of a real language model).
+- **What we saw:** news of a party spread to about 9–12 of the 25 agents, and switching off the "importance" part of memory stopped it spreading entirely.
+
+#### 065 · [A Survey on Large Language Model based Autonomous Agents](09-Reasoning-and-Agents/065-Wang-et-al-2023-LLM-Agents-Survey/) — Wang et al., 2023
+- **The idea:** a map of the whole agent field: profiles, memory, planning and action.
+- **What we built:** the survey's framework as plug-together parts, with five planning strategies.
+- **What we saw:** on a six-step task, planning with feedback from the environment succeeded about 95% of the time, against about 25% for planning once and hoping.
+
+---
+
+### Stage 10 · Alignment: teaching models what people want
+
+**The story.** A model that predicts text is not automatically helpful or safe. This stage covers how assistants like ChatGPT are trained: people compare pairs of answers, a "reward model" learns their preferences, and the language model is then trained to score well on it. It also covers using AI feedback guided by written principles instead of human labels, and a simpler method (DPO) that skips the reinforcement-learning step.
+
+#### 066 · [Learning to Summarize from Human Feedback](10-Alignment/066-Stiennon-et-al-2020-Summarize-from-Human-Feedback/) — Stiennon et al., 2020
+- **The idea:** train a **reward model** from human comparisons of summaries, then improve the summariser with reinforcement learning.
+- **What we built:** the whole pipeline with real (tiny) networks: supervised training, comparisons, reward model and reinforcement learning.
+- **What we saw:** quality rose clearly. Without a penalty for drifting too far from the original model, it exploited the reward model by repeating the main topic: a higher score but worse real quality.
+
+#### 067 · [Training Language Models to Follow Instructions with Human Feedback (InstructGPT)](10-Alignment/067-Ouyang-et-al-2022-InstructGPT/) — Ouyang et al., 2022
+- **The idea:** the full **RLHF** recipe behind ChatGPT: learn from demonstrations, then rankings, then reinforcement learning, while mixing in pretraining so the model doesn't lose old skills.
+- **What we built:** every stage with tiny real networks.
+- **What we saw:** mixing in pretraining kept the new helpfulness while recovering lost skills. **Honest result:** reinforcement learning did not beat simple supervised training here, because our reward model was too weak.
+
+#### 068 · [Constitutional AI: Harmlessness from AI Feedback](10-Alignment/068-Bai-et-al-2022-Constitutional-AI/) — Bai et al., 2022
+- **The idea:** instead of human labels, the AI critiques and revises its own answers using a written list of principles (a "constitution").
+- **What we built:** the critique-and-revise loop and AI-generated preference labels, in a small simulated text world.
+- **What we saw:** harmful answers fell from 100% to under 1% after a few revisions. Labels that rewarded dodging questions produced an evasive model, while the constitution produced one that explains instead.
+
+#### 069 · [Direct Preference Optimization (DPO)](10-Alignment/069-Rafailov-et-al-2023-DPO/) — Rafailov et al., 2023
+- **The idea:** **DPO** gets the same effect as RLHF with one simple training loss, no separate reward model and no reinforcement learning.
+- **What we built:** DPO, a full RLHF baseline, and a task where the best possible result can be computed exactly.
+- **What we saw:** DPO got close to the best possible (87–98%). **Honest result:** RLHF got even closer here (99–100%), so the paper's claim that DPO beats it was not reproduced on this toy.
+
+---
+
+### Stage 11 · Retrieval: giving models knowledge they can look up
+
+**The story.** Models forget, make things up, and go out of date. Retrieval lets a model search a collection of documents first and answer from what it finds. Search engines did this with keywords; these papers do it with meaning (embeddings), then connect search and answer-writing so both learn together. This is one of the most widely used patterns in AI applications today ("RAG").
+
+#### 070 · [Dense Passage Retrieval for Open-Domain Question Answering](11-Retrieval-RAG/070-Karpukhin-et-al-2020-Dense-Passage-Retrieval/) — Karpukhin et al., 2020
+- **The idea:** search by **meaning** using embeddings, instead of matching keywords.
+- **What we built:** a toy Wikipedia, the classic keyword search (BM25), the embedding-based retriever, and a mix of the two.
+- **What we saw:** for reworded questions, meaning-based search found the right page 82% of the time against 19% for keywords. But for names it had never seen, keywords won (83% vs 49%). Combining both was best everywhere.
+
+#### 071 · [Retrieval-Augmented Generation (RAG)](11-Retrieval-RAG/071-Lewis-et-al-2020-RAG/) — Lewis et al., 2020
+- **The idea:** **RAG**: retrieve documents, then write the answer from them, training search and writing together.
+- **What we built:** both versions of RAG from the paper, and swapping the document collection without retraining.
+- **What we saw:** answering from memory got 9%, while RAG with a learned retriever got 58%. Swapping in an updated collection changed the answers correctly.
+
+#### 072 · [Atlas: Few-shot Learning with Retrieval Augmented Language Models](11-Retrieval-RAG/072-Izacard-et-al-2022-Atlas/) — Izacard et al., 2022
+- **The idea:** a retrieval model that learns new tasks from just a few examples, by pre-training the searcher and the reader together.
+- **What we built:** the reader, four ways of training the retriever, joint pre-training and index compression.
+- **What we saw:** with 64 examples, joint pre-training reached about 50% against 7% without it, and compressing the index 16 times lost almost nothing.
+
+---
+
+### Stage 12 · Efficient fine-tuning and quantization: big models on small hardware
+
+**The story.** Large models need huge amounts of memory. This stage covers two families of tricks used every day by AI engineers. **LoRA** adapts a model by training a tiny add-on instead of all its weights. **Quantization** stores the model's numbers in 8 or 4 bits instead of 16 or 32. Combined (QLoRA), they let you fine-tune a huge model on a single graphics card.
+
+#### 073 · [LoRA: Low-Rank Adaptation of Large Language Models](12-Efficient-Finetuning-and-Quantization/073-Hu-et-al-2022-LoRA/) — Hu et al., 2022
+- **The idea:** **LoRA**: freeze the big model and train a tiny "patch" made of two thin matrices. Far fewer numbers to train and store.
+- **What we built:** LoRA on our tiny LLaMA, teaching it a new task.
+- **What we saw:** with 4,096 trainable numbers LoRA got 97.4%, against 99.8% for full fine-tuning with 133,000. Switching the patch off brought back the original skill that full fine-tuning had destroyed.
+
+#### 074 · [SmoothQuant](12-Efficient-Finetuning-and-Quantization/074-Xiao-et-al-2023-SmoothQuant/) — Xiao et al., 2023
+- **The idea:** a few huge values inside the model ruin 8-bit storage. **SmoothQuant** moves that difficulty from the activations to the weights, where it's easier to handle.
+- **What we built:** 8-bit quantisation at several levels of detail, and the smoothing trick.
+- **What we saw:** naive 8-bit collapsed to about 6–8% accuracy, while SmoothQuant kept the full-precision 98.9%.
+
+#### 075 · [GPTQ: Accurate Post-Training Quantization](12-Efficient-Finetuning-and-Quantization/075-Frantar-et-al-2023-GPTQ/) — Frantar et al., 2023
+- **The idea:** **GPTQ** rounds weights to 4 (or fewer) bits one at a time, adjusting the remaining weights to make up for each rounding error.
+- **What we built:** GPTQ, the simple rounding baseline, and the slow exact method it approximates.
+- **What we saw:** at a harsh 2 bits, simple rounding fell to 75.5% while GPTQ kept 97.7% (full precision: 98.6%). The fast method gave exactly the same result as the slow one.
+
+#### 076 · [AWQ: Activation-aware Weight Quantization](12-Efficient-Finetuning-and-Quantization/076-Lin-et-al-2023-AWQ/) — Lin et al., 2023
+- **The idea:** a small fraction of weights matter most, the ones connected to large activations. Protect them by scaling before rounding.
+- **What we built:** AWQ's search for the best scaling, and the comparison with GPTQ.
+- **What we saw:** protecting just 3 important channels rescued 4-bit accuracy from 27% to 99%, and AWQ kept 98%.
+
+#### 077 · [QLoRA: Efficient Finetuning of Quantized LLMs](12-Efficient-Finetuning-and-Quantization/077-Dettmers-et-al-2023-QLoRA/) — Dettmers et al., 2023
+- **The idea:** **QLoRA**: store the frozen model in 4 bits (with a new number format, "NF4") and train LoRA patches on top. A 65-billion-parameter model can then be fine-tuned on one GPU.
+- **What we built:** the NF4 format, double quantisation and QLoRA on our tiny model.
+- **What we saw:** QLoRA matched full 16-bit fine-tuning (99.3% vs 99.7%), and for a 65B model the memory need falls from about 786 GB to about 43 GB.
+
+#### 078 · [LLM-QAT: Data-Free Quantization Aware Training](12-Efficient-Finetuning-and-Quantization/078-Liu-et-al-2023-LLM-QAT/) — Liu et al., 2023
+- **The idea:** train the model *while* it is quantised so it adapts, using text the model generates itself as training data.
+- **What we built:** quantisation-aware training and self-generated training data.
+- **What we saw:** at very low precision, simple rounding fell to 2.5%, while training on self-generated text recovered 96.7%.
+
+---
+
+### Stage 13 · Systems: making training and inference fast
+
+**The story.** Big models are only possible because of clever engineering: computing attention without wasting memory, splitting a model across many chips, and coordinating thousands of computers. This stage covers those systems ideas, from early distributed training to the techniques used to train today's largest models.
+
+#### 079 · [FlashAttention](13-Systems-Inference-and-Training/079-Dao-et-al-2022-FlashAttention/) — Dao et al., 2022
+- **The idea:** compute attention in small tiles that fit in the chip's fast memory, avoiding slow trips to main memory. Exact same answer, much faster.
+- **What we built:** standard and tiled attention, with a counter for memory traffic.
+- **What we saw:** identical results, with about 9 times less memory traffic at length 1,024 (and the traffic scaling as the paper's theory says).
+
+#### 080 · [Efficiently Scaling Transformer Inference](13-Systems-Inference-and-Training/080-Pope-et-al-2022-Efficiently-Scaling-Transformer-Inference/) — Pope et al., 2022
+- **The idea:** how to split a huge model across many chips to answer requests quickly and cheaply.
+- **What we built:** the paper's cost model and a simulation of the different ways of splitting the work.
+- **What we saw:** we reproduced the paper's table of maximum context lengths (1,333 / 666 / 42,654 vs its 1,320 / 660 / 43,000).
+
+#### 081 · [Parallelized Stochastic Gradient Descent](13-Systems-Inference-and-Training/081-Zinkevich-et-al-2010-Parallelized-SGD/) — Zinkevich et al., 2010
+- **The idea:** train separate copies of a model on different machines with no communication, then simply average them at the end.
+- **What we built:** the method with many simulated machines, plus checks of its theory.
+- **What we saw:** going from 1 to 10 machines helped far more than going from 10 to 100.
+
+#### 082 · [TensorFlow: Large-Scale Machine Learning on Heterogeneous Distributed Systems](13-Systems-Inference-and-Training/082-Abadi-et-al-2015-TensorFlow-Whitepaper/) — Abadi et al., 2015
+- **The idea:** describe a computation as a graph of operations, and let the system work out gradients and where each piece should run.
+- **What we built:** a miniature TensorFlow from scratch, with automatic gradients and device placement.
+- **What we saw:** exact gradients, and smart placement ran 3 times faster (4.6 vs 15.7 ms) with identical results.
+
+#### 083 · [TensorFlow: A System for Large-Scale Machine Learning](13-Systems-Inference-and-Training/083-Abadi-et-al-2016-TensorFlow-OSDI/) — Abadi et al., 2016
+- **The idea:** the production design of TensorFlow, including splitting huge tables across machines and using spare "backup" workers to avoid waiting for slow machines.
+- **What we built:** these features on top of our mini-TensorFlow, plus a simulator of slow machines.
+- **What we saw:** backup workers sped training up, with the best number close to the paper's.
+
+#### 084 · [GPipe: Pipeline Parallelism](13-Systems-Inference-and-Training/084-Huang-et-al-2019-GPipe/) — Huang et al., 2019
+- **The idea:** split a model into stages on different chips, and feed small "micro-batches" through like an assembly line.
+- **What we built:** a simulator and a real working pipeline in PyTorch.
+- **What we saw:** the pipeline gives exactly the same results as ordinary training, and the speed-up (6.56 with 8 stages) is close to the paper's 6.3.
+
+#### 085 · [PipeDream: Generalized Pipeline Parallelism](13-Systems-Inference-and-Training/085-Narayanan-et-al-2019-PipeDream/) — Narayanan et al., 2019
+- **The idea:** a smarter pipeline that keeps every chip busy all the time, with an automatic planner for splitting the model.
+- **What we built:** the planner, the schedule, and a real pipelined network.
+- **What we saw:** the planner rediscovered the paper's own layout for a famous network. **Surprise:** a shortcut the paper warns against didn't cause problems on our small model.
+
+#### 086 · [ZeRO: Memory Optimizations Toward Training Trillion Parameter Models](13-Systems-Inference-and-Training/086-Rajbhandari-et-al-2020-ZeRO/) — Rajbhandari et al., 2020
+- **The idea:** stop every GPU from storing a full copy of everything; split the training state across GPUs instead.
+- **What we built:** the memory formulas and a simulated multi-GPU training job.
+- **What we saw:** the paper's memory figures were reproduced exactly (120 GB → 1.9 GB per GPU), with identical training results.
+
+---
+
+### Stage 14 · Production machine learning: keeping AI working in the real world
+
+**The story.** Building a model is the easy part. Keeping it working for years is harder: data changes, small code changes ripple unexpectedly, and models quietly get worse. These papers explain the hidden costs of real ML systems ("technical debt"), how to test and monitor them, how to detect when incoming data has shifted, and how to document models honestly.
+
+#### 087 · [Machine Learning: The High-Interest Credit Card of Technical Debt](14-Production-ML/087-Sculley-et-al-2014-High-Interest-Credit-Card-Technical-Debt/) — Sculley et al., 2014
+- **The idea:** ML systems pile up hidden maintenance costs: "changing anything changes everything", hidden feedback loops, and unused inputs that can break things later.
+- **What we built:** each warning in the paper as a small experiment.
+- **What we saw:** removing one input shifted other parts of the model, quietly cleaning up an old data field hurt a model that still relied on it, and a fixed decision threshold lost precision after retraining.
+
+#### 088 · [Hidden Technical Debt in Machine Learning Systems](14-Production-ML/088-Sculley-et-al-2015-Hidden-Technical-Debt/) — Sculley et al., 2015
+- **The idea:** the famous picture: the ML code is a tiny box inside a huge system of data pipelines, configuration and monitoring.
+- **What we built:** feedback-loop simulations, a configuration checker, and monitoring tools.
+- **What we saw:** a recommender that only learns from what it shows got stuck on a non-best item in 75% of runs, and in our own tiny pipeline the actual ML was only 19% of the code.
+
+#### 089 · [The ML Test Score: A Rubric for ML Production Readiness](14-Production-ML/089-Breck-et-al-2017-ML-Test-Score/) — Breck et al., 2017
+- **The idea:** a checklist of 28 tests (data, model, infrastructure, monitoring) and a score for how production-ready a system is.
+- **What we built:** the scoring rule and 26 working automated tests on a toy system.
+- **What we saw:** each of 11 deliberately injected bugs was caught by at least one test.
+
+#### 090 · [Rules of Machine Learning](14-Production-ML/090-Zinkevich-Rules-of-ML/) — Zinkevich (Google)
+- **The idea:** 43 practical rules, such as "launch with a simple heuristic first" and "log the features you actually used at serving time".
+- **What we built:** experiments for the rules that make a measurable claim.
+- **What we saw:** a simple heuristic got 44% of the way to the ML model (the guide says about 50%), and correctly weighting sampled data fixed a model that had doubled its predictions.
+
+#### 091 · [Failing Loudly: An Empirical Study of Methods for Detecting Dataset Shift](14-Production-ML/091-Rabanser-et-al-2019-Failing-Loudly/) — Rabanser et al., 2019
+- **The idea:** compares ways to detect when incoming data no longer looks like the training data.
+- **What we built:** the full detection pipeline with eight ways of summarising data and four statistical tests.
+- **What we saw:** like the paper, using the model's own outputs worked well with few samples. Large shifts were easy to catch; small or class-balance shifts were hard.
+
+#### 092 · [Data Distribution Shifts and Monitoring](14-Production-ML/092-Huyen-Data-Distribution-Shifts-and-Monitoring/) — Chip Huyen, 2022 (blog post)
+- **The idea:** the different kinds of data shift, how to detect them, and how to respond.
+- **What we built:** each kind of shift, monitoring with sensible time windows, and retraining strategies.
+- **What we saw:** the most damaging kind ("concept drift", where the right answer changes) was **invisible** to input monitoring; only checking accuracy against real outcomes revealed it.
+
+#### 093 · [Model Cards for Model Reporting](14-Production-ML/093-Mitchell-et-al-2019-Model-Cards/) — Mitchell et al., 2019
+- **The idea:** ship every model with a short report card, including how well it works **for different groups of people**, not just on average.
+- **What we built:** a model card generator and the paper's two worked examples (smile detection and toxicity scoring).
+- **What we saw:** the averages looked fine while specific groups had much higher error rates, which only the group-by-group breakdown revealed.
+
+#### 094 · [Designing Machine Learning Systems](14-Production-ML/094-Huyen-2022-Designing-ML-Systems/) — Chip Huyen, 2022 (book)
+- **The idea:** the whole life of an ML system: data, labels, features, evaluation, deployment and testing in production. (The book is paid, so this is built from its public table of contents, without quoting it.)
+- **What we built:** a small experiment for each major technique.
+- **What we saw:** "data leakage" made a model look 84% accurate on pure noise, an "invariance test" (does changing only a protected attribute change the decision?) caught a biased loan model that flipped 15.9% of decisions, and updating a model daily was 67 times cheaper than retraining from scratch, for the same quality.
+
+---
+
+### Stage 15 · Reinforcement learning *(optional)*
+
+**The story.** Reinforcement learning teaches by reward rather than by example: try something, see how well it went, do more of what worked. These papers show it at large scale: a simple "evolution" method, the team that beat world champions at Dota 2, and AlphaGo, the first program to beat a professional Go player.
+
+#### 095 · [Evolution Strategies as a Scalable Alternative to Reinforcement Learning](15-Reinforcement-Learning-optional/095-Salimans-et-al-2017-Evolution-Strategies/) — Salimans et al., 2017
+- **The idea:** nudge all the weights randomly, keep the nudges that score better, repeat. It's simple and easy to spread over thousands of computers.
+- **What we built:** the method, its many-computer version, and a balancing-pole game to test it on.
+- **What we saw:** it solved the game, and the noise in its learning signal stayed steady as tasks got longer, while the usual RL method's noise grew a lot. The paper predicts exactly that.
+
+#### 096 · [Dota 2 with Large Scale Deep Reinforcement Learning (OpenAI Five)](15-Reinforcement-Learning-optional/096-Berner-et-al-2019-Dota2-OpenAI-Five/) — Berner et al., 2019
+- **The idea:** a team of AIs beat the world champions at the video game Dota 2 after 10 months of training, using "surgery" to change the model without starting over.
+- **What we built:** model surgery, the training method (PPO) on a small game, and the paper's data-quality experiments.
+- **What we saw:** surgery kept learned skill when the model was changed, and using out-of-date data slowed learning the most, as the paper found.
+
+#### 097 · [Mastering the Game of Go with Deep Neural Networks and Tree Search (AlphaGo)](15-Reinforcement-Learning-optional/097-Silver-et-al-2016-AlphaGo/) — Silver et al., 2016
+- **The idea:** **AlphaGo** combined networks that suggest moves and judge positions with a look-ahead search.
+- **What we built:** the whole AlphaGo pipeline on a small board game that can be solved perfectly, so every part can be checked against perfect play.
+- **What we saw:** adding search raised the share of perfect moves from 86% to about 99%. **Honest differences:** on this small game the simple fast policy beat the network, and self-play training helped less than in the paper.
+
+---
+
+### Stage 16 · Extras *(optional)*
+
+**The story.** A mix of interesting side-roads: learning with labels in a contrastive way, a lesson from early feature learning, two early papers on representing relationships, and two papers about AI's impact on society, covering security risks and jobs.
+
+#### 098 · [Supervised Contrastive Learning](16-Extras-optional/098-Khosla-et-al-2020-Supervised-Contrastive-Learning/) — Khosla et al., 2020
+- **The idea:** pull together the representations of all images of the same class and push apart those of different classes.
+- **What we built:** the paper's losses and its two-stage training, compared with ordinary training.
+- **What we saw:** it was much more robust to noise and blur, but less robust to small shifts. With careful tuning, ordinary training tied it.
+
+#### 099 · [The Importance of Encoding Versus Training with Sparse Coding and Vector Quantization](16-Extras-optional/099-Coates-Ng-2011-Encoding-vs-Training-Sparse-Coding/) — Coates & Ng, 2011
+- **The idea:** in early feature learning, **how you use** the learned patterns matters more than how carefully you learn them.
+- **What we built:** every combination of five ways to learn the patterns and four ways to use them.
+- **What we saw:** exactly the paper's finding. With a good way of using them, even randomly chosen patterns worked as well as carefully learned ones.
+
+#### 100 · [Using Matrices to Model Symbolic Relationships](16-Extras-optional/100-Sutskever-Hinton-2008-Matrices-Symbolic-Relationships/) — Sutskever & Hinton, 2008
+- **The idea:** represent both things and relationships as small matrices, so relationships can be combined and even learned from definitions, like learning "+3" from "3 plus".
+- **What we built:** the model on clock arithmetic and on family trees.
+- **What we saw:** results close to the paper's tables, including learning a relationship it was never shown directly.
+
+#### 101 · [Modelling Relational Data using Bayesian Clustered Tensor Factorization](16-Extras-optional/101-Sutskever-Salakhutdinov-Tenenbaum-2009-Bayesian-Clustered-Tensor-Factorization/) — Sutskever, Salakhutdinov & Tenenbaum, 2009
+- **The idea:** predict missing facts in a database while also grouping similar things, using careful probability reasoning.
+- **What we built:** the model and its comparisons, on made-up data with hidden groups.
+- **What we saw:** with very little data the simple method failed badly while the careful probabilistic one kept working, and it found the hidden groups when there was enough data.
+
+#### 102 · [The Malicious Use of Artificial Intelligence](16-Extras-optional/102-Brundage-et-al-2018-Malicious-Use-of-AI/) — Brundage et al., 2018
+- **The idea:** a policy report on how AI could be misused, and what researchers and governments should do about it.
+- **What we built:** a simple model of how cheaper automation expands attacks, and a "red team" check of a classifier. This is defensive only, with no attack tools.
+- **What we saw:** a targeted data-poisoning attack fooled the model and slipped past a common cleaning defence, but a simple check on 100 trusted examples caught it.
+
+#### 103 · [Automation and New Tasks: How Technology Displaces and Reinstates Labor](16-Extras-optional/103-Acemoglu-Restrepo-2019-Automation-and-New-Tasks/) — Acemoglu & Restrepo, 2019
+- **The idea:** economics of AI and jobs. **Automation** takes tasks from workers and lowers labour's share of income. **New tasks** create work and raise it. US wages grew slowly after 1987 because automation sped up while new tasks slowed.
+- **What we built:** the paper's model of tasks and its method for measuring these effects, tested on data where we know the true answer.
+- **What we saw:** automation always lowered labour's share, but whether wages fell depended on how much better the machines were ("so-so automation" lowers wages). The measurement method underestimated both effects, as the paper itself warns.
+
+---
+
+## 7. How honest are the results?
+
+This project tries hard not to oversell. Here is what you should know:
+
+- **Everything runs at small scale.** The original papers used huge models, real datasets and many computers. Here, models are tiny and data is often made up, so the *idea* can be seen in seconds on a laptop. Our numbers are not meant to match the paper's final scores; the paper's own numbers are always quoted next to ours for comparison.
+- **Big experiments were written but not run.** From paper 007 on, each `experiments.py` contains the larger experiments. They were not run while building this repository, and each `EXPLAINED.md` states which checks *were* run.
+- **Paper claims were checked against the actual paper.** Numbers attributed to a paper were verified by searching its text, not quoted from memory.
+- **Where our results disagreed with the paper, we say so.** Some examples you will find in the explanations:
+  - paper 006's own step-size formula is slightly wrong (2.38 should be 2.0);
+  - paper 033's stated receptive field (315) doesn't match its formula (373);
+  - DPO did not beat RLHF on our toy (069);
+  - reinforcement learning did not beat supervised training in our InstructGPT toy (067);
+  - AlphaGo's mixed evaluation was not the best variant on our small game (097);
+  - supervised contrastive learning tied a well-tuned ordinary model (098).
+- **Tests prove correctness of the pieces, not the paper's conclusions.** A passing test means, for example, "this gradient is computed correctly" or "this matches the paper's table". The demos and explanations are where the paper's *claims* are examined.
+
+---
+
+## 8. Other files in this repository
+
+| File | What it contains |
+|---|---|
+| [READING_ORDER.md](READING_ORDER.md) | The full learning path: all 103 papers in order, why each stage comes where it does, a difficulty rating for each paper, and a three-pass method for reading any paper. |
+| [TECHNICAL_SUMMARY.md](TECHNICAL_SUMMARY.md) | The detailed technical version of this page: exactly which equations, figures and tables were implemented for each paper, and the precise numbers each demo prints. |
+| [SOURCES.txt](SOURCES.txt) | Where each paper's PDF was downloaded from. The PDFs themselves are **not** stored on GitHub (they are copyrighted), so download them from these links if you want to read the originals. |
+
+**Requirements:** Python 3.10 or newer. Paper 001 needs nothing else. Later papers use `numpy`, some use `scipy`, `scikit-learn` or `torch`/`torchvision`, figures use `matplotlib`, and the tests need `pytest`.
